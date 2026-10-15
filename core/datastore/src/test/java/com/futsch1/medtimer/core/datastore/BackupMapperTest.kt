@@ -120,7 +120,7 @@ class BackupMapperTest {
         assertEquals("SKIP", backup.dismissNotificationAction)
         assertEquals(false, backup.cannotSkipReminders)
         assertEquals(false, backup.bigNotifications)
-        assertEquals(false, backup.combineNotifications)
+        assertEquals(true, backup.combineNotifications)
         assertEquals(false, backup.useRelativeDateTime)
         assertEquals(true, backup.showTakenTimeInOverview)
         assertEquals(true, backup.showRemindedTimeInOverview)

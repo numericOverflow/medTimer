@@ -104,8 +104,6 @@ class NotificationTest : MedTimerTestBase() {
             preferences.back()
         }
 
-        settings.click(R.string.display_settings, R.string.combine_notifications)
-
         seed.medicine(TEST_MED) {
             reminder(FIRST_REMINDER, laterToday())
             reminder(SECOND_REMINDER, laterToday())
@@ -140,8 +138,6 @@ class NotificationTest : MedTimerTestBase() {
     @Test
     @AllowFlaky(attempts = 3)
     fun variableAmount() {
-        settings.click(R.string.display_settings, R.string.combine_notifications)
-
         seed.medicine(TEST_MED) { reminder("1", laterToday()) }
 
         medicines.clickItem(0)
@@ -170,10 +166,7 @@ class NotificationTest : MedTimerTestBase() {
     @Test
     @AllowFlaky(attempts = 3)
     fun variableAmountBigButton() {
-        settings.inSection(R.string.display_settings) {
-            preferences.click(R.string.big_notifications)
-            preferences.click(R.string.combine_notifications)
-        }
+        settings.click(R.string.display_settings, R.string.big_notifications)
 
         val medicineId = seed.medicine(TEST_MED) { reminder("1", laterToday(), variableAmount = true) }
 
@@ -292,8 +285,6 @@ class NotificationTest : MedTimerTestBase() {
     @Test
     @AllowFlaky(attempts = 3)
     fun sameTimeReminders() {
-        settings.click(R.string.display_settings, R.string.combine_notifications)
-
         val notificationTime = aboutToFire()
 
         seed.medicine(TEST_MED) {

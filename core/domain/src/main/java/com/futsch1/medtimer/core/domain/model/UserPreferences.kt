@@ -76,7 +76,7 @@ data class UserPreferences(
                 dismissNotificationAction = DismissNotificationAction.SKIP,
                 cannotSkipReminders = false,
                 bigNotifications = false,
-                combineNotifications = false,
+                combineNotifications = true,
                 useRelativeDateTime = false,
                 showTakenTimeInOverview = true,
                 showRemindedTimeInOverview = true,

@@ -344,8 +344,6 @@ class ReminderTest : MedTimerTestBase() {
     @Test
     @AllowFlaky(attempts = 3)
     fun reschedule() {
-        settings.click(R.string.display_settings, R.string.combine_notifications)
-
         seed.medicine(TEST_MED) { intervalReminder("1", intervalWithinToday()) }
 
         navigation.toOverview()
