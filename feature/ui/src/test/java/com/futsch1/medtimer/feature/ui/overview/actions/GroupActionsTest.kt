@@ -37,7 +37,7 @@ class GroupActionsTest {
         val actions = GroupActions(group(event(1), event(2)))
 
         assertEquals(listOf(1, 2), actions.confirmAllEvents.map { it.id })
-        assertEquals(listOf(Button.TAKEN, Button.SKIPPED, Button.RESCHEDULE), actions.menuButtons)
+        assertEquals(listOf(Button.TAKEN, Button.TAKEN_AT, Button.SKIPPED, Button.RESCHEDULE), actions.menuButtons)
     }
 
     @Test
@@ -53,7 +53,7 @@ class GroupActionsTest {
         val actions = GroupActions(group(event(1), event(2, cannotBeSkipped = true)))
 
         assertEquals(listOf(1, 2), actions.confirmAllEvents.map { it.id })
-        assertEquals(listOf(Button.TAKEN, Button.RESCHEDULE), actions.menuButtons)
+        assertEquals(listOf(Button.TAKEN, Button.TAKEN_AT, Button.RESCHEDULE), actions.menuButtons)
     }
 
     @Test
@@ -61,7 +61,7 @@ class GroupActionsTest {
         val actions = GroupActions(group(event(1)))
 
         assertTrue(actions.confirmAllEvents.isEmpty())
-        assertEquals(listOf(Button.TAKEN, Button.SKIPPED, Button.RESCHEDULE), actions.menuButtons)
+        assertEquals(listOf(Button.TAKEN, Button.TAKEN_AT, Button.SKIPPED, Button.RESCHEDULE), actions.menuButtons)
     }
 
     @Test

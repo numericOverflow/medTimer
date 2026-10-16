@@ -109,6 +109,8 @@
     <string name="cancel">ألغِ</string>
     <string name="confirm">تأكيد</string>
     <string name="confirm_all">تأكيد الكل</string>
+    <string name="taken_at">تم التناول في…</string>
+    <string name="taken_time_in_future">لا يمكن أن يكون وقت التناول في المستقبل</string>
     <string name="are_you_sure_delete_medicine">هل أنت متأكد من حذف الدواء؟</string>
     <string name="no_reminders">لم يتم تعيين تذكيرات</string>
     <string name="twenty_four_hours">24 ساعة</string>

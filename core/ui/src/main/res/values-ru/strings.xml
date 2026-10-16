@@ -89,6 +89,8 @@
     <string name="cancel">Отменить</string>
     <string name="confirm">Подтвердить</string>
     <string name="confirm_all">Подтвердить все</string>
+    <string name="taken_at">Принято в…</string>
+    <string name="taken_time_in_future">Время приёма не может быть в будущем</string>
     <string name="are_you_sure_delete_medicine">Вы точно хотите удалить лекарство?</string>
     <string name="no_reminders">Не установлено напоминаний</string>
     <string name="version">Версия %s</string>

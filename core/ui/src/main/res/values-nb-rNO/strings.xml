@@ -28,6 +28,8 @@
     <string name="cancel">Avbryt</string>
     <string name="confirm">Bekreft</string>
     <string name="confirm_all">Bekreft alle</string>
+    <string name="taken_at">Tatt kl.…</string>
+    <string name="taken_time_in_future">Tidspunktet for inntak kan ikke være i fremtiden</string>
     <string name="are_you_sure_delete_medicine">Er du sikker på at du vil slette dette legemiddelet?</string>
     <string name="no_reminders">Ingen påminnelser satt</string>
     <string name="expiration_settings">Innstillinger for utløpsdato</string>

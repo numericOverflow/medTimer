@@ -55,8 +55,12 @@ class ReminderCommandBusImpl @Inject constructor(
         locationSnoozeProcessor.processLocationSnooze()
     }
 
-    override suspend fun markReminderEvents(reminderEventIds: List<Int>, status: ReminderEvent.ReminderStatus) {
-        notificationProcessor.processReminderEventsInNotification(reminderEventIds, status)
+    override suspend fun markReminderEvents(
+        reminderEventIds: List<Int>,
+        status: ReminderEvent.ReminderStatus,
+        processedTime: Instant?
+    ) {
+        notificationProcessor.processReminderEventsInNotification(reminderEventIds, status, processedTime)
         scheduleNextReminderNotificationProcessor.scheduleNextReminder()
     }
 

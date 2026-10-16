@@ -118,6 +118,8 @@
     <string name="tab_settings">Налаштування</string>
     <string name="confirm">Підтвердити</string>
     <string name="confirm_all">Підтвердити всі</string>
+    <string name="taken_at">Прийнято о…</string>
+    <string name="taken_time_in_future">Час прийому не може бути в майбутньому</string>
     <string name="three_days">3 дні</string>
     <string name="clear_events">Очистити всю історію</string>
     <string name="are_you_sure_delete_events">Це безповоротно видалить всю історію прийому ліків. Цю дію не можна скасувати.</string>
