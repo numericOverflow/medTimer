@@ -30,8 +30,13 @@ object OverviewTestTags {
     const val EVENT_CARD = "overview_event_card"
     const val EVENT_STATE_BUTTON = "overview_event_state"
     const val EVENT_TEXT = "overview_event_text"
+    const val GROUP_TIME = "overview_group_time"
 
+    /** [index] runs across the whole list, not within a group, so it matches the lazy list item index. */
     fun event(index: Int) = "overview_event_$index"
+
+    /** The header of the group at [index], counted from the top of the list. */
+    fun group(index: Int) = "overview_group_$index"
 
     fun day(date: java.time.LocalDate) = "overview_day_$date"
 

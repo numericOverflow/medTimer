@@ -41,6 +41,18 @@ class OverviewRobot(private val ui: ComposeUi) {
         list.await(LONG_TIMEOUT) { eventCount() >= expected }
     }
 
+    /** Counts the composed group headers only, like [eventCount] counts the composed events. */
+    fun groupCount(): Int = list.count(GROUP_TIME)
+
+    fun assertGroupCount(expected: Int) {
+        list.await { groupCount() == expected }
+    }
+
+    /** [index] counts groups from the top of the list. The group has to be composed already. */
+    fun assertGroupTime(index: Int, expected: String) {
+        list.await { list.scope(OverviewTestTags.group(index)).textsUnder(GROUP_TIME).singleOrNull() == expected }
+    }
+
     fun clickEventState(index: Int) {
         scrollToEvent(index)
         stateButtonAtEvent(index).performClick()
@@ -207,6 +219,7 @@ class OverviewRobot(private val ui: ComposeUi) {
         val EVENT_CARD = hasTestTag(OverviewTestTags.EVENT_CARD)
         val EVENT_STATE_BUTTON = hasTestTag(OverviewTestTags.EVENT_STATE_BUTTON)
         val EVENT_TEXT = hasTestTag(OverviewTestTags.EVENT_TEXT)
+        val GROUP_TIME = hasTestTag(OverviewTestTags.GROUP_TIME)
         val SELECTION_BAR = hasTestTag(OverviewTestTags.SELECTION_BAR)
         const val LONG_TIMEOUT = 20_000L
 
