@@ -51,6 +51,7 @@ import com.futsch1.medtimer.core.ui.rememberMedicineIcon
 import com.futsch1.medtimer.core.ui.theme.MedTimerTheme
 import com.futsch1.medtimer.feature.ui.overview.actions.ActionsFactory
 import com.futsch1.medtimer.feature.ui.overview.actions.Button
+import com.futsch1.medtimer.feature.ui.overview.actions.GroupActions
 import com.futsch1.medtimer.feature.ui.overview.model.OverviewEvent
 import com.futsch1.medtimer.feature.ui.overview.model.OverviewEventContent
 import com.futsch1.medtimer.feature.ui.overview.model.OverviewGroup
@@ -84,6 +85,8 @@ var overviewEventListScrollToNowEnabled = true
  * Every event stays its own lazy list item, and the first item of a group carries the header.
  * That keeps the item index equal to the running event index of [OverviewTestTags.event], and it
  * lets each row animate on its own when it moves between groups.
+ *
+ * [onAction] receives one event for a row's state button and several for a group header action.
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -92,7 +95,7 @@ fun OverviewEventList(
     selection: SelectionListController<OverviewEvent>,
     onEventClick: (OverviewEvent) -> Unit,
     onEnterSelectionMode: (OverviewEvent) -> Unit,
-    onAction: (Button, OverviewEvent) -> Unit,
+    onAction: (Button, List<OverviewEvent>) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val railColor = MaterialTheme.colorScheme.primary
@@ -146,8 +149,13 @@ fun OverviewEventList(
                 val position = OverviewGroupPosition.of(indexInGroup, group.events.size)
                 Column(Modifier.animateItem()) {
                     if (position.isGroupStart) {
+                        val groupActions = remember(group) { GroupActions(group) }
                         OverviewGroupHeader(
                             timestamp = group.timestamp,
+                            showConfirmAll = groupActions.confirmAllEvents.isNotEmpty(),
+                            menuButtons = groupActions.menuButtons,
+                            onConfirmAll = { onAction(Button.TAKEN, groupActions.confirmAllEvents) },
+                            onMenuAction = { button -> onAction(button, group.events) },
                             modifier = Modifier
                                 .padding(top = if (groupIndex > 0) EVENT_SPACING else 0.dp)
                                 .testTag(OverviewTestTags.group(groupIndex)),
@@ -164,7 +172,7 @@ fun OverviewEventList(
                         onClick = { onEventClick(event) },
                         onToggleSelection = { selection.toggleSelection(event) },
                         onEnterSelectionMode = { onEnterSelectionMode(event) },
-                        onAction = { button -> onAction(button, event) },
+                        onAction = { button -> onAction(button, listOf(event)) },
                         modifier = Modifier.testTag(OverviewTestTags.event(groupStartIndices[groupIndex] + indexInGroup)),
                         position = position,
                         onRailAnchor = { railAnchors[event.id] = it },

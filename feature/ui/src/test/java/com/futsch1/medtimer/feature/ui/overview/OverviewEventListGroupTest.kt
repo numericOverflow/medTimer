@@ -8,11 +8,13 @@ import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.performClick
 import androidx.compose.ui.unit.dp
 import androidx.test.core.app.ApplicationProvider
 import com.futsch1.medtimer.core.ui.list.SelectionListController
 import com.futsch1.medtimer.core.ui.theme.MedTimerTheme
 import com.futsch1.medtimer.core.ui.time.SystemDateTimeFormat
+import com.futsch1.medtimer.feature.ui.overview.actions.Button
 import com.futsch1.medtimer.feature.ui.overview.model.OverviewEvent
 import com.futsch1.medtimer.feature.ui.overview.model.groupOverviewEvents
 import org.junit.Rule
@@ -36,7 +38,7 @@ class OverviewEventListGroupTest {
     private val nine = LocalDate.of(2026, 5, 28).atTime(9, 0).atZone(ZoneId.systemDefault()).toEpochSecond()
     private val ten = nine + 3_600
 
-    private fun setList(events: List<OverviewEvent>) {
+    private fun setList(events: List<OverviewEvent>, onAction: (Button, List<OverviewEvent>) -> Unit = { _, _ -> }) {
         composeTestRule.setContent {
             MedTimerTheme {
                 OverviewEventList(
@@ -44,10 +46,42 @@ class OverviewEventListGroupTest {
                     selection = SelectionListController { it.id },
                     onEventClick = {},
                     onEnterSelectionMode = {},
-                    onAction = { _, _ -> },
+                    onAction = onAction,
                 )
             }
         }
+    }
+
+    @Test
+    fun `Confirm all marks every event of its group taken with one tap`() {
+        val actions = mutableListOf<Pair<Button, List<Int>>>()
+        setList(
+            listOf(
+                TestOverviewEvent(id = 1, timestamp = nine, medicineName = "One"),
+                TestOverviewEvent(id = 2, timestamp = nine, medicineName = "Two"),
+                TestOverviewEvent(id = 3, timestamp = ten, medicineName = "Three"),
+            ),
+            onAction = { button, events -> actions += button to events.map { it.id } },
+        )
+
+        composeTestRule.onAllNodesWithTag(OverviewTestTags.GROUP_CONFIRM_ALL).assertCountEquals(1)
+        composeTestRule.onNode(groupChild(0, OverviewTestTags.GROUP_CONFIRM_ALL)).performClick()
+
+        assertEquals(listOf(Button.TAKEN to listOf(1, 2)), actions)
+    }
+
+    @Test
+    fun `the overflow opens the action menu for the whole group`() {
+        setList(
+            listOf(
+                TestOverviewEvent(id = 1, timestamp = nine, medicineName = "One"),
+                TestOverviewEvent(id = 2, timestamp = nine, medicineName = "Two"),
+            ),
+        )
+
+        composeTestRule.onNode(groupChild(0, OverviewTestTags.GROUP_MENU)).performClick()
+
+        composeTestRule.onNodeWithTag(OverviewTestTags.ACTION_MENU).assertExists()
     }
 
     @Test
@@ -89,9 +123,11 @@ class OverviewEventListGroupTest {
 
     private fun assertHeaderTime(groupIndex: Int, timestamp: Long) {
         val expected = SystemDateTimeFormat.time(ApplicationProvider.getApplicationContext(), Instant.ofEpochSecond(timestamp))
-        composeTestRule.onNode(hasTestTag(OverviewTestTags.GROUP_TIME) and hasAnyAncestor(hasTestTag(OverviewTestTags.group(groupIndex))))
-            .assertTextEquals(expected)
+        composeTestRule.onNode(groupChild(groupIndex, OverviewTestTags.GROUP_TIME)).assertTextEquals(expected)
     }
+
+    private fun groupChild(groupIndex: Int, tag: String) =
+        hasTestTag(tag) and hasAnyAncestor(hasTestTag(OverviewTestTags.group(groupIndex)))
 
     private fun bounds(tag: String) = composeTestRule.onNodeWithTag(tag).getBoundsInRoot()
 }

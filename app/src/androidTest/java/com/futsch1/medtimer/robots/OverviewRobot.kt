@@ -50,8 +50,16 @@ class OverviewRobot(private val ui: ComposeUi) {
 
     /** [index] counts groups from the top of the list. The group has to be composed already. */
     fun assertGroupTime(index: Int, expected: String) {
-        list.await { list.scope(OverviewTestTags.group(index)).textsUnder(GROUP_TIME).singleOrNull() == expected }
+        list.await { groupScope(index).textsUnder(GROUP_TIME).singleOrNull() == expected }
     }
+
+    /** Taps `Confirm all` in the header of the group at [index]. The group has to be composed already. */
+    fun confirmAll(index: Int) = groupScope(index).click(GROUP_CONFIRM_ALL)
+
+    /** Opens the arc action menu of the group at [index]; continue with [clickAction]. */
+    fun openGroupMenu(index: Int) = groupScope(index).click(GROUP_MENU)
+
+    private fun groupScope(index: Int) = list.scope(OverviewTestTags.group(index))
 
     fun clickEventState(index: Int) {
         scrollToEvent(index)
@@ -220,6 +228,8 @@ class OverviewRobot(private val ui: ComposeUi) {
         val EVENT_STATE_BUTTON = hasTestTag(OverviewTestTags.EVENT_STATE_BUTTON)
         val EVENT_TEXT = hasTestTag(OverviewTestTags.EVENT_TEXT)
         val GROUP_TIME = hasTestTag(OverviewTestTags.GROUP_TIME)
+        val GROUP_CONFIRM_ALL = hasTestTag(OverviewTestTags.GROUP_CONFIRM_ALL)
+        val GROUP_MENU = hasTestTag(OverviewTestTags.GROUP_MENU)
         val SELECTION_BAR = hasTestTag(OverviewTestTags.SELECTION_BAR)
         const val LONG_TIMEOUT = 20_000L
 

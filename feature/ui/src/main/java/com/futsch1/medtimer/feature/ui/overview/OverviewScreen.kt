@@ -264,7 +264,7 @@ fun OverviewScreen(
                         selection = selection,
                         onEventClick = onEventClick,
                         onEnterSelectionMode = onEnterSelectionMode,
-                        onAction = { button, event -> onAction(button, listOf(event)) },
+                        onAction = onAction,
                         modifier = Modifier.padding(end = 8.dp),
                     )
                 }
