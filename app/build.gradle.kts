@@ -53,6 +53,9 @@ android {
             )
         }
         debug {
+            // A separate app ID lets a debug build install beside the store app, with its own data.
+            applicationIdSuffix = ".debug"
+            versionNameSuffix = "-debug"
             enableUnitTestCoverage = true
             enableAndroidTestCoverage = true
         }
