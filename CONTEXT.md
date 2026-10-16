@@ -76,6 +76,18 @@ A record that a scheduled reminder reached a terminal state for a given medicine
 The two Reminder Event states the Analysis feature aggregates and visualizes.
 _Avoid_: done/dismissed, completed/missed.
 
+**Reminder group**:
+The reminder events of one day that share one reminder timestamp. The Overview shows a reminder group as one card under one time header, with `Confirm all` and an overflow menu for the whole group. "Same time" means an identical timestamp, through `groupBySameTime`. There is no tolerance window. Grouping follows the `combine_notifications` setting. With the setting off, every event forms its own group. In code the type is `OverviewGroup`, and the events stay `ReminderEvent` and `OverviewEvent`.
+_Avoid_: task, batch, slot.
+
+**Resolved**:
+The UI umbrella for a Taken, Skipped or Acknowledged reminder event. The Overview moves fully resolved reminder groups into a collapsible section labeled "Resolved" at the bottom of the day. "Resolved" is a UI label only. Code keeps `ReminderEvent`, `Taken` and `Skipped`, and `OverviewState.isResolved` is the one place that maps them to the label. This mirrors the Statistics-versus-Analysis split.
+_Avoid_: completed, done.
+
+**Taken time**:
+The `processedTimestamp` of a Taken reminder event: the time the dose was really taken. It can differ from the time the dose was logged. `Taken at...` records a picked time. Without a picked time, the default taken time setting picks the time of logging or the scheduled time, through `resolveTakenTime`, and never a time in the future.
+_Avoid_: processed time (in user-facing text), log time.
+
 **Tag filter**:
 A global filter on medicines by tag. The Reminder Table respects it; Charts do not; the Calendar
 filters by a single selected medicine instead.
@@ -105,6 +117,7 @@ _Avoid_: forecast horizon, lookahead period.
   tab keeps its existing "Analysis" label (`@string/analysis`). The earlier Statistics→Analysis code
   rename was **cancelled**, so no Kotlin symbols, SharedPreferences keys, or translations change. The
   two terms coexist by design: "Statistics" in code, "Analysis" on the tab.
+- **Resolved vs. Taken and Skipped** — resolved (2026-10-16): "Resolved" is the Overview section label for taken, skipped and acknowledged events. Code keeps the `ReminderEvent` status names. See `docs/adr/0006-overview-reminder-groups-and-resolved-section.md`.
 
 ## Example dialogue
 

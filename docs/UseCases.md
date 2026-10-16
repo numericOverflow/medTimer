@@ -87,6 +87,20 @@ date can be modified.
 
 <img src='edit_event.png' width=200 />
 
+## Doses at the same time
+
+If `Combine same time notifications` is on, the `Overview` screen shows the doses of one reminder time together, in one card under one time header. The setting is on by default. The header offers `Confirm all`, which marks every open dose of that time as taken with one tap. The three-dot button next to it opens the actions for the whole group, for example `Skipped` or `Reschedule`. An action that does not apply to every dose of the group does not show. You can still act on one dose with its own state button, or long-press a dose to select the whole group.
+
+## Log a dose that you took earlier
+
+If you took a dose but logged it later, use `Taken at…` in the action menu of the dose. A long press on `Taken` opens the same pickers. Pick the date and the time when you really took the dose. The history then shows that time, and interval and linked reminders count from it. A time in the future is not accepted. `Taken at…` also works for a whole group or a selection, and all of the doses get the same time.
+
+The `Default taken time` display setting decides the time of a plain `Taken`. `Time of logging` records the moment that you tap. `Scheduled time` records the reminder time, but never a time after the current time. The setting also sets the time that the `Taken at…` pickers open on.
+
+## Resolved doses
+
+Taken and skipped doses move out of the way. When every dose of a reminder time is resolved, the group moves into the `Resolved` section at the bottom of the day. A group with some open doses stays in place, and its resolved doses show dimmed. The `Resolved` section is collapsed by default. Tap its header to open or close it, and the app remembers your choice. The section opens on its own for a day without open doses, and when the filter shows only taken or skipped doses.
+
 ## Additional dose with preset amount
 
 On the `Overview` screen, the `Log additional dose` screen asks to select the medicine and the
