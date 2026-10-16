@@ -62,6 +62,9 @@
     <string name="confirm_all">Staðfesta allt</string>
     <string name="taken_at">Tekið kl.…</string>
     <string name="taken_time_in_future">Inntökutíminn má ekki vera í framtíðinni</string>
+    <string name="default_taken_time">Sjálfgefinn inntökutími</string>
+    <string name="taken_time_now">Skráningartími</string>
+    <string name="taken_time_scheduled">Áætlaður tími</string>
     <string name="are_you_sure_delete_medicine">Ert þú viss um að þú viljir eyða þessu lyfi?</string>
     <string name="no_reminders">Engar áminningar</string>
     <string name="version">Útgáfa %s</string>

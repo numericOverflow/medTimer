@@ -3,7 +3,9 @@ package com.futsch1.medtimer.processortests
 import android.app.AlarmManager
 import android.app.NotificationManager
 import com.futsch1.medtimer.core.datastore.di.DatastoreModule
+import com.futsch1.medtimer.core.domain.model.DefaultTakenTime
 import com.futsch1.medtimer.core.domain.model.ReminderEvent
+import com.futsch1.medtimer.core.domain.model.UserPreferences
 import com.futsch1.medtimer.database.ReminderEventEntity
 import com.futsch1.medtimer.database.dao.MedicineDao
 import com.futsch1.medtimer.database.dao.ReminderDao
@@ -183,6 +185,58 @@ class NotificationProcessorTest {
         // The supplied time wins over the current time
         assertEquals(4, testReminderContext.repositoryFakes.reminderEvents[0].processedTimestamp)
         verify(testReminderContext.notificationManagerFake.mock, times(1)).cancel(1)
+    }
+
+    @Test
+    fun scheduledDefaultTakenTimeRecordsTheReminderTime() {
+        testReminderContext.userPreferences = UserPreferences.default().copy(defaultTakenTime = DefaultTakenTime.SCHEDULED)
+        testReminderContext.instant = Instant.ofEpochSecond(10)
+        val reminderNotificationData = fillWithOneReminder(testReminderContext)
+        testReminderContext.repositoryFakes.reminderEvents[0].remindedTimestamp = 6
+
+        runBlocking {
+            notificationProcessor.processReminderEventsInNotification(
+                reminderNotificationData.reminderEventIds.toList(),
+                ReminderEvent.ReminderStatus.TAKEN
+            )
+        }
+
+        assertEquals(6, testReminderContext.repositoryFakes.reminderEvents[0].processedTimestamp)
+    }
+
+    @Test
+    fun scheduledDefaultTakenTimeNeverRecordsAFutureTime() {
+        testReminderContext.userPreferences = UserPreferences.default().copy(defaultTakenTime = DefaultTakenTime.SCHEDULED)
+        testReminderContext.instant = Instant.ofEpochSecond(10)
+        val reminderNotificationData = fillWithOneReminder(testReminderContext)
+        // Taken ahead of the reminder time
+        testReminderContext.repositoryFakes.reminderEvents[0].remindedTimestamp = 50
+
+        runBlocking {
+            notificationProcessor.processReminderEventsInNotification(
+                reminderNotificationData.reminderEventIds.toList(),
+                ReminderEvent.ReminderStatus.TAKEN
+            )
+        }
+
+        assertEquals(10, testReminderContext.repositoryFakes.reminderEvents[0].processedTimestamp)
+    }
+
+    @Test
+    fun scheduledDefaultTakenTimeLeavesSkippedDosesAtTheCurrentTime() {
+        testReminderContext.userPreferences = UserPreferences.default().copy(defaultTakenTime = DefaultTakenTime.SCHEDULED)
+        testReminderContext.instant = Instant.ofEpochSecond(10)
+        val reminderNotificationData = fillWithOneReminder(testReminderContext)
+        testReminderContext.repositoryFakes.reminderEvents[0].remindedTimestamp = 6
+
+        runBlocking {
+            notificationProcessor.processReminderEventsInNotification(
+                reminderNotificationData.reminderEventIds.toList(),
+                ReminderEvent.ReminderStatus.SKIPPED
+            )
+        }
+
+        assertEquals(10, testReminderContext.repositoryFakes.reminderEvents[0].processedTimestamp)
     }
 
     @Test

@@ -12,6 +12,7 @@ import com.futsch1.medtimer.core.domain.model.ReminderType
 import com.futsch1.medtimer.core.domain.repository.ReminderEventRepository
 import com.futsch1.medtimer.core.domain.repository.ReminderRepository
 import com.futsch1.medtimer.feature.reminders.api.notificationData.ReminderNotificationData
+import com.futsch1.medtimer.feature.reminders.api.scheduling.resolveTakenTime
 import com.futsch1.medtimer.feature.reminders.notificationData.ReminderNotificationFactory
 import com.futsch1.medtimer.feature.reminders.api.notificationData.toReminderNotificationData
 import java.time.Instant
@@ -120,13 +121,17 @@ class NotificationProcessor @Inject constructor(
     /**
      * The one place that records a status change. [processedTime] backdates the change, for a dose
      * logged after the fact: the event row and the stock change both carry that instant.
+     *
+     * Without [processedTime], a dose marked taken records the time that the default taken time
+     * setting picks, see [resolveTakenTime]. Every other status records the current time.
      */
     suspend fun setReminderEventStatus(
         status: ReminderEvent.ReminderStatus,
         reminderEvents: List<ReminderEvent>,
         processedTime: Instant? = null
     ) {
-        val processedTime = processedTime ?: timeAccess.now()
+        val now = timeAccess.now()
+        val defaultTakenTime = preferencesDataSource.preferences.value.defaultTakenTime
 
         val reminderEvents = reminderEvents.map { reminderEvent ->
             val status =
@@ -135,6 +140,11 @@ class NotificationProcessor @Inject constructor(
                 } else {
                     status
                 }
+            val processedTime = processedTime ?: if (status == ReminderEvent.ReminderStatus.TAKEN) {
+                resolveTakenTime(defaultTakenTime, reminderEvent.remindedTimestamp, now)
+            } else {
+                now
+            }
             Log.i(
                 LogTags.REMINDER, String.format(
                     "%s reminder reID %d for %s (%s)",

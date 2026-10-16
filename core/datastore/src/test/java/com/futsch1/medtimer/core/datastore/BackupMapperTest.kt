@@ -5,6 +5,7 @@ import android.net.Uri
 import androidx.test.core.app.ApplicationProvider
 import com.futsch1.medtimer.core.domain.backup.SettingsBackup
 import com.futsch1.medtimer.core.domain.model.BackupInterval
+import com.futsch1.medtimer.core.domain.model.DefaultTakenTime
 import com.futsch1.medtimer.core.domain.model.DismissNotificationAction
 import com.futsch1.medtimer.core.domain.model.HomeLocation
 import com.futsch1.medtimer.core.domain.model.ThemeSetting
@@ -48,6 +49,7 @@ class BackupMapperTest {
             showTakenTimeInOverview = false,
             showRemindedTimeInOverview = true,
             showStockChangesInOverview = false,
+            defaultTakenTime = DefaultTakenTime.SCHEDULED,
             systemLocale = true,
             theme = ThemeSetting.ALTERNATIVE,
             hideMedicineName = true,
@@ -84,6 +86,7 @@ class BackupMapperTest {
         assertEquals(false, backup.showTakenTimeInOverview)
         assertEquals(true, backup.showRemindedTimeInOverview)
         assertEquals(false, backup.showStockChangesInOverview)
+        assertEquals("SCHEDULED", backup.defaultTakenTime)
         assertEquals(true, backup.systemLocale)
         assertEquals("ALTERNATIVE", backup.theme)
         assertEquals(true, backup.hideMedicineName)
@@ -125,6 +128,7 @@ class BackupMapperTest {
         assertEquals(true, backup.showTakenTimeInOverview)
         assertEquals(true, backup.showRemindedTimeInOverview)
         assertEquals(true, backup.showStockChangesInOverview)
+        assertEquals("NOW", backup.defaultTakenTime)
         assertEquals(false, backup.systemLocale)
         assertEquals("DEFAULT", backup.theme)
         assertEquals(false, backup.hideMedicineName)
@@ -340,6 +344,8 @@ class BackupMapperTest {
         backup.applyTo(ds)
 
         assertNull(ds.preferences.value.homeLocation)
+        // A backup from before the setting existed restores the default
+        assertEquals(DefaultTakenTime.NOW, ds.preferences.value.defaultTakenTime)
     }
 
     @Test
@@ -371,6 +377,7 @@ class BackupMapperTest {
             combineNotifications = true,
             useRelativeDateTime = false,
             showTakenTimeInOverview = false,
+            defaultTakenTime = DefaultTakenTime.SCHEDULED,
             systemLocale = true,
             theme = ThemeSetting.ALTERNATIVE,
             hideMedicineName = false,
@@ -407,6 +414,7 @@ class BackupMapperTest {
         assertEquals(original.combineNotifications, result.combineNotifications)
         assertEquals(original.useRelativeDateTime, result.useRelativeDateTime)
         assertEquals(original.showTakenTimeInOverview, result.showTakenTimeInOverview)
+        assertEquals(original.defaultTakenTime, result.defaultTakenTime)
         assertEquals(original.systemLocale, result.systemLocale)
         assertEquals(original.theme, result.theme)
         assertEquals(original.hideMedicineName, result.hideMedicineName)

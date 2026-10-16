@@ -85,6 +85,9 @@
     <string name="confirm_all">Alles bevestigen</string>
     <string name="taken_at">Ingenomen om…</string>
     <string name="taken_time_in_future">Het innametijdstip kan niet in de toekomst liggen</string>
+    <string name="default_taken_time">Standaard innametijdstip</string>
+    <string name="taken_time_now">Tijdstip van registratie</string>
+    <string name="taken_time_scheduled">Gepland tijdstip</string>
     <string name="are_you_sure_delete_medicine">Wil je de behandeling verwijderen?</string>
     <string name="no_reminders">Geen herinneringen</string>
     <string name="version">Versie %s</string>

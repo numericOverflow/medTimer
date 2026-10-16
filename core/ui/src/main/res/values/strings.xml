@@ -90,6 +90,9 @@
     <string name="confirm_all">Confirm all</string>
     <string name="taken_at">Taken at…</string>
     <string name="taken_time_in_future">The taken time cannot be in the future</string>
+    <string name="default_taken_time">Default taken time</string>
+    <string name="taken_time_now">Time of logging</string>
+    <string name="taken_time_scheduled">Scheduled time</string>
     <string name="are_you_sure_delete_medicine">Are you sure to delete the medicine?</string>
     <string name="no_reminders">No reminders set</string>
     <string name="version">Version %s</string>

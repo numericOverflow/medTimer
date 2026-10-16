@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.Uri
 import androidx.test.core.app.ApplicationProvider
 import com.futsch1.medtimer.core.domain.model.BackupInterval
+import com.futsch1.medtimer.core.domain.model.DefaultTakenTime
 import com.futsch1.medtimer.core.domain.model.DismissNotificationAction
 import com.futsch1.medtimer.core.domain.model.HomeLocation
 import com.futsch1.medtimer.core.domain.model.ThemeSetting
@@ -179,6 +180,19 @@ class PreferencesDataSourceTest {
         ).forEach { (input, expected) ->
             sharedPreferences.edit().putString(PreferencesDataSource.DISMISS_NOTIFICATION_ACTION, input).commit()
             assertEquals(expected, dataSource.preferences.value.dismissNotificationAction)
+        }
+    }
+
+    @Test
+    fun `defaultTakenTime parses all variants`() {
+        data class Case(val input: String?, val expected: DefaultTakenTime)
+        listOf(
+            Case("0", DefaultTakenTime.NOW),
+            Case("1", DefaultTakenTime.SCHEDULED),
+            Case("invalid", DefaultTakenTime.NOW),
+        ).forEach { (input, expected) ->
+            sharedPreferences.edit().putString(PreferencesDataSource.DEFAULT_TAKEN_TIME, input).commit()
+            assertEquals(expected, dataSource.preferences.value.defaultTakenTime)
         }
     }
 

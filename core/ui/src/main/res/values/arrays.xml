@@ -28,6 +28,10 @@
         <item>0</item>
         <item>1</item>
     </string-array>
+    <string-array name="default_taken_time_entries">
+        <item>@string/taken_time_now</item>
+        <item>@string/taken_time_scheduled</item>
+    </string-array>
     <string-array name="instructions_suggestions">
         <item>@string/before_meal</item>
         <item>@string/after_meal</item>

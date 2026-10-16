@@ -85,6 +85,9 @@
     <string name="confirm_all">Vahvista kaikki</string>
     <string name="taken_at">Otettu klo…</string>
     <string name="taken_time_in_future">Ottamisaika ei voi olla tulevaisuudessa</string>
+    <string name="default_taken_time">Oletusottamisaika</string>
+    <string name="taken_time_now">Kirjausaika</string>
+    <string name="taken_time_scheduled">Ajastettu aika</string>
     <string name="are_you_sure_delete_medicine">Haluatko varmasti poistaa lääkkeen?</string>
     <string name="no_reminders">Ei muistutuksia</string>
     <string name="version">Versio %s</string>

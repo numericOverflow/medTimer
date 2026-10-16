@@ -12,6 +12,14 @@
         android:summary="@string/combine_notifications_summary"
         app:singleLineTitle="false"
         app:key="combine_notifications" />
+    <ListPreference
+        android:defaultValue="0"
+        android:entries="@array/default_taken_time_entries"
+        android:entryValues="@array/values_0_and_1"
+        android:title="@string/default_taken_time"
+        app:key="default_taken_time"
+        app:singleLineTitle="false"
+        app:useSimpleSummaryProvider="true" />
     <SwitchPreferenceCompat
         android:defaultValue="false"
         android:summary="@string/use_relative_date_time_summary"

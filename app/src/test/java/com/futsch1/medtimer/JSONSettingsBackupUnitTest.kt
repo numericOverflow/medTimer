@@ -2,6 +2,7 @@ package com.futsch1.medtimer
 
 import com.futsch1.medtimer.core.datastore.PreferencesDataSource
 import com.futsch1.medtimer.core.domain.model.BackupInterval
+import com.futsch1.medtimer.core.domain.model.DefaultTakenTime
 import com.futsch1.medtimer.core.domain.model.DismissNotificationAction
 import com.futsch1.medtimer.core.domain.model.HomeLocation
 import com.futsch1.medtimer.core.domain.model.ThemeSetting
@@ -41,6 +42,7 @@ class JSONSettingsBackupUnitTest {
         showTakenTimeInOverview = false,
         showRemindedTimeInOverview = true,
         showStockChangesInOverview = true,
+        defaultTakenTime = DefaultTakenTime.SCHEDULED,
         systemLocale = true,
         theme = ThemeSetting.ALTERNATIVE,
         hideMedicineName = true,
@@ -88,6 +90,10 @@ class JSONSettingsBackupUnitTest {
         verify(mockPrefs2).putBoolean(PreferencesDataSource.SHOW_TAKEN_TIME_IN_OVERVIEW, false)
         verify(mockPrefs2).putBoolean(PreferencesDataSource.SHOW_REMINDED_TIME_IN_OVERVIEW, true)
         verify(mockPrefs2).putBoolean(PreferencesDataSource.SHOW_STOCK_CHANGES_IN_OVERVIEW, true)
+        verify(mockPrefs2).putString(
+            PreferencesDataSource.DEFAULT_TAKEN_TIME,
+            DefaultTakenTime.SCHEDULED.ordinal.toString()
+        )
         verify(mockPrefs2).putBoolean(PreferencesDataSource.SYSTEM_LOCALE, true)
         verify(mockPrefs2).putString(
             PreferencesDataSource.THEME,

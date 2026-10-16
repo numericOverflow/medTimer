@@ -3,6 +3,7 @@ package com.futsch1.medtimer.core.datastore
 import androidx.core.net.toUri
 import com.futsch1.medtimer.core.domain.backup.SettingsBackup
 import com.futsch1.medtimer.core.domain.model.BackupInterval
+import com.futsch1.medtimer.core.domain.model.DefaultTakenTime
 import com.futsch1.medtimer.core.domain.model.DismissNotificationAction
 import com.futsch1.medtimer.core.domain.model.HomeLocation
 import com.futsch1.medtimer.core.domain.model.ThemeSetting
@@ -29,6 +30,7 @@ fun UserPreferences.toSettingsBackup(): SettingsBackup = SettingsBackup(
     showTakenTimeInOverview = showTakenTimeInOverview,
     showRemindedTimeInOverview = showRemindedTimeInOverview,
     showStockChangesInOverview = showStockChangesInOverview,
+    defaultTakenTime = defaultTakenTime.name,
     systemLocale = systemLocale,
     theme = theme.name,
     hideMedicineName = hideMedicineName,
@@ -78,6 +80,10 @@ fun SettingsBackup.applyTo(preferencesDataSource: PreferencesDataSource) {
     preferencesDataSource.putBoolean(
         PreferencesDataSource.SHOW_STOCK_CHANGES_IN_OVERVIEW,
         showStockChangesInOverview ?: true
+    )
+    preferencesDataSource.putString(
+        PreferencesDataSource.DEFAULT_TAKEN_TIME,
+        (DefaultTakenTime.entries.firstOrNull { it.name == defaultTakenTime } ?: DefaultTakenTime.NOW).ordinal.toString()
     )
     preferencesDataSource.putBoolean(PreferencesDataSource.SYSTEM_LOCALE, systemLocale)
     preferencesDataSource.putString(

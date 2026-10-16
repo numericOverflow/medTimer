@@ -19,6 +19,15 @@ enum class BackupInterval {
     NEVER, DAILY, WEEKLY, MONTHLY
 }
 
+/** The time a dose records when it is marked taken without a picked time. */
+enum class DefaultTakenTime {
+    /** The moment it is marked taken. */
+    NOW,
+
+    /** The time the reminder was due, so a dose logged late keeps its scheduled time. */
+    SCHEDULED
+}
+
 data class UserPreferences(
     // Reminder settings
     val weekendStartTime: LocalTime,
@@ -41,6 +50,7 @@ data class UserPreferences(
     val showTakenTimeInOverview: Boolean,
     val showRemindedTimeInOverview: Boolean,
     val showStockChangesInOverview: Boolean,
+    val defaultTakenTime: DefaultTakenTime,
     val systemLocale: Boolean,
     val theme: ThemeSetting,
     // Security settings
@@ -81,6 +91,7 @@ data class UserPreferences(
                 showTakenTimeInOverview = true,
                 showRemindedTimeInOverview = true,
                 showStockChangesInOverview = true,
+                defaultTakenTime = DefaultTakenTime.NOW,
                 systemLocale = false,
                 theme = ThemeSetting.DEFAULT,
                 hideMedicineName = false,

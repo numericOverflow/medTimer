@@ -85,6 +85,9 @@
     <string name="confirm_all">Alle bestätigen</string>
     <string name="taken_at">Eingenommen um…</string>
     <string name="taken_time_in_future">Die Einnahmezeit darf nicht in der Zukunft liegen</string>
+    <string name="default_taken_time">Standard-Einnahmezeit</string>
+    <string name="taken_time_now">Zeitpunkt der Erfassung</string>
+    <string name="taken_time_scheduled">Geplante Zeit</string>
     <string name="are_you_sure_delete_medicine">Medikament wirklich löschen?</string>
     <string name="no_reminders">Keine Erinnerungen</string>
     <string name="version">Version %s</string>

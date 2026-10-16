@@ -17,6 +17,7 @@ import com.futsch1.medtimer.core.ui.R
 import com.futsch1.medtimer.feature.reminders.api.command.ReminderCommandBus
 import com.futsch1.medtimer.feature.reminders.api.getVariableAmountActivityIntent
 import com.futsch1.medtimer.feature.reminders.api.notificationData.ReminderNotificationData
+import com.futsch1.medtimer.feature.reminders.api.scheduling.resolveTakenTime
 import com.futsch1.medtimer.feature.ui.helpers.DeleteHelper
 import com.futsch1.medtimer.feature.ui.overview.model.PastReminderEvent
 import kotlinx.coroutines.CoroutineScope
@@ -141,8 +142,12 @@ class ActionsVisitor @Inject constructor(
         }
         val scheduledReminders = visitScheduledReminder.toList()
         val pastReminderEvents = visitedPastReminderEvents.toList()
+        // The pickers open on the time a plain Taken would record, so the default setting applies here too.
+        val remindedTimestamp = pastReminderEvents.firstOrNull()?.reminderEvent?.remindedTimestamp
+            ?: scheduledReminders.first().timestamp
+        val initialTime = resolveTakenTime(preferencesDataSource.preferences.value.defaultTakenTime, remindedTimestamp, timeAccess.now())
 
-        takenTimePicker.pick(timeAccess.now()) { takenTime ->
+        takenTimePicker.pick(initialTime) { takenTime ->
             fragmentActivity.lifecycleScope.launch {
                 val reminderEventIds = scheduledReminders.map { scheduledReminder ->
                     reminderEventCreator.getOrCreateReminderEvent(scheduledReminder, scheduledReminder.timestamp.epochSecond)

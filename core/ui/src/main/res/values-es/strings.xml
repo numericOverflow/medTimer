@@ -90,6 +90,9 @@
     <string name="confirm_all">Confirmar todo</string>
     <string name="taken_at">Tomado a las…</string>
     <string name="taken_time_in_future">La hora de la toma no puede estar en el futuro</string>
+    <string name="default_taken_time">Hora de toma predeterminada</string>
+    <string name="taken_time_now">Hora del registro</string>
+    <string name="taken_time_scheduled">Hora programada</string>
     <string name="are_you_sure_delete_medicine">¿Quieres eliminar el medicamento?</string>
     <string name="no_reminders">Ningún recordatorio establecido</string>
     <string name="version">Versión %s</string>

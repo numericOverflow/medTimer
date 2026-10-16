@@ -85,6 +85,9 @@
     <string name="confirm_all">Tümünü onayla</string>
     <string name="taken_at">Alınma saati…</string>
     <string name="taken_time_in_future">Alınma zamanı gelecekte olamaz</string>
+    <string name="default_taken_time">Varsayılan alınma zamanı</string>
+    <string name="taken_time_now">Kayıt zamanı</string>
+    <string name="taken_time_scheduled">Planlanan zaman</string>
     <string name="are_you_sure_delete_medicine">İlacı silmek istediğinizden emin misiniz?</string>
     <string name="no_reminders">Hiç hatırlatıcı ayarlanmadı</string>
     <string name="version">Versiyon %s</string>

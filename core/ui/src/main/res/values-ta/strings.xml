@@ -91,6 +91,9 @@
     <string name="confirm_all">அனைத்தையும் உறுதிப்படுத்தவும்</string>
     <string name="taken_at">எடுத்த நேரம்…</string>
     <string name="taken_time_in_future">எடுத்த நேரம் எதிர்காலத்தில் இருக்க முடியாது</string>
+    <string name="default_taken_time">இயல்பு எடுத்த நேரம்</string>
+    <string name="taken_time_now">பதிவு செய்த நேரம்</string>
+    <string name="taken_time_scheduled">திட்டமிட்ட நேரம்</string>
     <string name="are_you_sure_delete_medicine">மருந்தை நீக்குவது உறுதி?</string>
     <string name="no_reminders">நினைவூட்டல்கள் இல்லை</string>
     <string name="version">பதிப்பு %s</string>
