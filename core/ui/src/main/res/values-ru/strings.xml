@@ -94,6 +94,7 @@
     <string name="default_taken_time">Время приёма по умолчанию</string>
     <string name="taken_time_now">Время записи</string>
     <string name="taken_time_scheduled">Запланированное время</string>
+    <string name="resolved_count">Выполнено (%1$d)</string>
     <string name="are_you_sure_delete_medicine">Вы точно хотите удалить лекарство?</string>
     <string name="no_reminders">Не установлено напоминаний</string>
     <string name="version">Версия %s</string>

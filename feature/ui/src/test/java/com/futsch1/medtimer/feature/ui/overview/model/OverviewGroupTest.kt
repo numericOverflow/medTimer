@@ -31,4 +31,26 @@ class OverviewGroupTest {
     fun `should return no groups for a day without events`() {
         assertTrue(groupOverviewEvents(emptyList(), combineNotifications = true).isEmpty())
     }
+
+    @Test
+    fun `should move only fully resolved groups into the resolved section`() {
+        val taken = TestOverviewEvent(id = 4, timestamp = 28_800, medicineName = "D", state = OverviewState.TAKEN)
+        val skipped = TestOverviewEvent(id = 5, timestamp = 32_400, medicineName = "E", state = OverviewState.SKIPPED)
+        val groups = groupOverviewEvents(listOf(taken, nine, nineToo, skipped, ten), combineNotifications = true)
+
+        val sections = OverviewDaySections.of(groups)
+
+        // The 09:00 group is part-resolved, so it stays open and in one piece
+        assertEquals(listOf(listOf(1, 2, 5), listOf(3)), sections.open.map { group -> group.events.map { it.id } })
+        assertEquals(listOf(listOf(4)), sections.resolved.map { group -> group.events.map { it.id } })
+        assertEquals(1, sections.resolvedEventCount)
+    }
+
+    @Test
+    fun `should treat taken and skipped as resolved and everything else as open`() {
+        assertEquals(
+            setOf(OverviewState.TAKEN, OverviewState.SKIPPED),
+            OverviewState.entries.filter { it.isResolved }.toSet(),
+        )
+    }
 }

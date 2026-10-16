@@ -84,6 +84,7 @@
     <string name="default_taken_time">Standardtidspunkt for indtagelse</string>
     <string name="taken_time_now">Tidspunkt for registrering</string>
     <string name="taken_time_scheduled">Planlagt tidspunkt</string>
+    <string name="resolved_count">Afklaret (%1$d)</string>
     <string name="are_you_sure_delete_medicine">Er du sikker på, at du vil slette medicinen?</string>
     <string name="no_reminders">Ingen påmindelser angivet</string>
     <string name="version">Version %s</string>

@@ -96,6 +96,7 @@ fun OverviewScreen(
         selection = viewModel.selection,
         onDaySelected = viewModel::selectDay,
         onToggleFilter = viewModel::toggleFilter,
+        onToggleResolvedSection = viewModel::toggleResolvedSection,
         onDismissBatteryWarning = viewModel::dismissBatteryWarning,
         onDismissExactRemindersWarning = viewModel::dismissExactRemindersWarning,
         onEnableExactReminders = {
@@ -119,6 +120,13 @@ fun OverviewScreen(
 }
 
 /**
+ * A filter to taken or skipped doses leaves nothing outside the resolved section, so the section
+ * opens on its own. A collapsed section would show an empty list instead.
+ */
+internal fun showsOnlyResolved(activeFilters: Set<OverviewFilter>): Boolean =
+    activeFilters.isNotEmpty() && activeFilters.all { it == OverviewFilter.TAKEN || it == OverviewFilter.SKIPPED }
+
+/**
  * Exact reminders also need the system's exact alarm permission on Android 12+;
  * sends the user to grant it when it is still missing.
  */
@@ -138,6 +146,7 @@ fun OverviewScreen(
     selection: SelectionListController<OverviewEvent>,
     onDaySelected: (LocalDate) -> Unit,
     onToggleFilter: (OverviewFilter) -> Unit,
+    onToggleResolvedSection: () -> Unit,
     onDismissBatteryWarning: () -> Unit,
     onDismissExactRemindersWarning: () -> Unit,
     onEnableExactReminders: () -> Unit,
@@ -261,6 +270,9 @@ fun OverviewScreen(
                 ) { content ->
                     OverviewEventList(
                         groups = dayContents[content] ?: persistentListOf(),
+                        resolvedSectionExpanded = state.resolvedSectionExpanded,
+                        resolvedSectionForcedOpen = showsOnlyResolved(state.activeFilters),
+                        onToggleResolvedSection = onToggleResolvedSection,
                         selection = selection,
                         onEventClick = onEventClick,
                         onEnterSelectionMode = onEnterSelectionMode,
@@ -361,6 +373,7 @@ private fun OverviewScreenPreview() {
                 selection = selection,
                 onDaySelected = {},
                 onToggleFilter = {},
+                onToggleResolvedSection = {},
                 onDismissBatteryWarning = {},
                 onDismissExactRemindersWarning = {},
                 onEnableExactReminders = {},

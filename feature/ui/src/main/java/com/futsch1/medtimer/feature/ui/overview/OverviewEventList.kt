@@ -53,12 +53,15 @@ import com.futsch1.medtimer.feature.ui.overview.actions.ActionsFactory
 import com.futsch1.medtimer.feature.ui.overview.actions.Button
 import com.futsch1.medtimer.feature.ui.overview.actions.GroupActions
 import com.futsch1.medtimer.feature.ui.overview.model.OverviewEvent
+import com.futsch1.medtimer.feature.ui.overview.model.OverviewDaySections
 import com.futsch1.medtimer.feature.ui.overview.model.OverviewEventContent
 import com.futsch1.medtimer.feature.ui.overview.model.OverviewGroup
 import com.futsch1.medtimer.feature.ui.overview.model.OverviewState
 import com.futsch1.medtimer.feature.ui.overview.model.groupOverviewEvents
 import com.google.gson.Gson
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import java.time.Duration
@@ -80,24 +83,53 @@ var overviewEventListCacheWindowEnabled = true
 var overviewEventListScrollToNowEnabled = true
 
 /**
- * The events of one day, one card per [OverviewGroup] under the group's time header.
+ * Test seam: the resolved section moves a dose to the bottom once it is taken, so tests that act
+ * on a row and then check the same row index would check another dose. Off keeps the time order.
+ */
+var overviewResolvedSectionEnabled = true
+
+private const val RESOLVED_SECTION_HEADER_KEY = "resolved_section_header"
+
+/**
+ * The events of one day, one card per [OverviewGroup] under the group's time header, with the
+ * fully resolved groups in a collapsible section at the bottom.
  *
  * Every event stays its own lazy list item, and the first item of a group carries the header.
  * That keeps the item index equal to the running event index of [OverviewTestTags.event], and it
- * lets each row animate on its own when it moves between groups.
+ * lets each row animate on its own when it moves between groups. For the same reason the resolved
+ * section header rides on the first resolved item while the section is open, and only takes an
+ * item of its own while it is collapsed, behind every event.
+ *
+ * The section opens on its own when [resolvedSectionForcedOpen] or when no open group is left, so
+ * that a finished day shows its doses rather than one collapsed header.
  *
  * [onAction] receives one event for a row's state button and several for a group header action.
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
+@SuppressWarnings("kotlin:S107")
 fun OverviewEventList(
     groups: ImmutableList<OverviewGroup>,
+    resolvedSectionExpanded: Boolean,
+    resolvedSectionForcedOpen: Boolean,
+    onToggleResolvedSection: () -> Unit,
     selection: SelectionListController<OverviewEvent>,
     onEventClick: (OverviewEvent) -> Unit,
     onEnterSelectionMode: (OverviewEvent) -> Unit,
     onAction: (Button, List<OverviewEvent>) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val sections = remember(groups) {
+        if (overviewResolvedSectionEnabled) OverviewDaySections.of(groups) else OverviewDaySections(groups, persistentListOf())
+    }
+    val resolvedSectionCollapsible = !resolvedSectionForcedOpen && sections.open.isNotEmpty()
+    val resolvedSectionOpen = resolvedSectionExpanded || !resolvedSectionCollapsible
+    val shownGroups = remember(sections, resolvedSectionOpen) {
+        if (resolvedSectionOpen) (sections.open + sections.resolved).toPersistentList() else sections.open
+    }
+    val firstResolvedGroupIndex = sections.open.size
+    val showResolvedSection = sections.resolved.isNotEmpty()
+
     val railColor = MaterialTheme.colorScheme.primary
     val railAnchors = remember { mutableStateMapOf<Int, Float>() }
     var listTop by remember { mutableFloatStateOf(0f) }
@@ -108,16 +140,17 @@ fun OverviewEventList(
         rememberLazyListState()
     }
     var scrolledToNow by remember { mutableStateOf(false) }
-    val groupStartIndices = remember(groups) { groups.runningFold(0) { start, group -> start + group.events.size } }
+    val groupStartIndices = remember(shownGroups) { shownGroups.runningFold(0) { start, group -> start + group.events.size } }
 
-    LaunchedEffect(groups) {
-        if (!overviewEventListScrollToNowEnabled || scrolledToNow || groups.isEmpty()) {
+    LaunchedEffect(shownGroups) {
+        if (!overviewEventListScrollToNowEnabled || scrolledToNow || shownGroups.isEmpty()) {
             return@LaunchedEffect
         }
 
         scrolledToNow = true
         // Scroll to the group rather than to the event, so that the group's header stays in view.
-        val groupIndex = groups.indexOfFirst { group ->
+        // Resolved groups hold no pending event, so the section never takes the initial position.
+        val groupIndex = shownGroups.indexOfFirst { group ->
             group.events.any { it.state == OverviewState.PENDING || it.state == OverviewState.RAISED }
         }
         if (groupIndex >= 0) {
@@ -141,13 +174,23 @@ fun OverviewEventList(
             .drawBehind { drawRailPills(railAnchors.values, listTop, railColor) }
             .testTag(OverviewTestTags.EVENT_LIST),
     ) {
-        groups.forEachIndexed { groupIndex, group ->
+        shownGroups.forEachIndexed { groupIndex, group ->
             itemsIndexed(group.events, key = { _, event -> event.id }) { indexInGroup, event ->
                 DisposableEffect(event.id) {
                     onDispose { railAnchors.remove(event.id) }
                 }
                 val position = OverviewGroupPosition.of(indexInGroup, group.events.size)
+                val startsResolvedSection = groupIndex == firstResolvedGroupIndex && indexInGroup == 0
                 Column(Modifier.animateItem()) {
+                    if (startsResolvedSection) {
+                        OverviewResolvedSectionHeader(
+                            eventCount = sections.resolvedEventCount,
+                            expanded = true,
+                            collapsible = resolvedSectionCollapsible,
+                            onToggle = onToggleResolvedSection,
+                            modifier = Modifier.padding(top = if (groupIndex > 0) EVENT_SPACING else 0.dp),
+                        )
+                    }
                     if (position.isGroupStart) {
                         val groupActions = remember(group) { GroupActions(group) }
                         OverviewGroupHeader(
@@ -157,7 +200,7 @@ fun OverviewEventList(
                             onConfirmAll = { onAction(Button.TAKEN, groupActions.confirmAllEvents) },
                             onMenuAction = { button -> onAction(button, group.events) },
                             modifier = Modifier
-                                .padding(top = if (groupIndex > 0) EVENT_SPACING else 0.dp)
+                                .padding(top = if (groupIndex > 0 && !startsResolvedSection) EVENT_SPACING else 0.dp)
                                 .testTag(OverviewTestTags.group(groupIndex)),
                         )
                     }
@@ -178,6 +221,19 @@ fun OverviewEventList(
                         onRailAnchor = { railAnchors[event.id] = it },
                     )
                 }
+            }
+        }
+        if (showResolvedSection && !resolvedSectionOpen) {
+            item(key = RESOLVED_SECTION_HEADER_KEY) {
+                OverviewResolvedSectionHeader(
+                    eventCount = sections.resolvedEventCount,
+                    expanded = false,
+                    collapsible = true,
+                    onToggle = onToggleResolvedSection,
+                    modifier = Modifier
+                        .padding(top = if (shownGroups.isNotEmpty()) EVENT_SPACING else 0.dp)
+                        .animateItem(),
+                )
             }
         }
     }
@@ -323,6 +379,9 @@ private fun OverviewEventListPreview() {
         Surface {
             OverviewEventList(
                 groups = rememberEventListPreviewGroups(),
+                resolvedSectionExpanded = false,
+                resolvedSectionForcedOpen = false,
+                onToggleResolvedSection = {},
                 selection = selection,
                 onEventClick = {},
                 onEnterSelectionMode = {},

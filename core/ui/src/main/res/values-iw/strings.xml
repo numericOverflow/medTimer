@@ -93,6 +93,7 @@
     <string name="default_taken_time">זמן נטילה ברירת מחדל</string>
     <string name="taken_time_now">זמן הרישום</string>
     <string name="taken_time_scheduled">הזמן המתוכנן</string>
+    <string name="resolved_count">טופלו (%1$d)</string>
     <string name="are_you_sure_delete_medicine">האם אתם בטוחים שאתם רוצים למחוק את התרופה?</string>
     <string name="no_reminders">לא הוגדרו התראות</string>
     <string name="version">גרסה %s</string>

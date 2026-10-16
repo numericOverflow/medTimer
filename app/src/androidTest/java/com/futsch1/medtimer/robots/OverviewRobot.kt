@@ -61,6 +61,11 @@ class OverviewRobot(private val ui: ComposeUi) {
 
     private fun groupScope(index: Int) = list.scope(OverviewTestTags.group(index))
 
+    /** Opens or closes the resolved section. Its header sits after every open group, so a long day has to be scrolled first. */
+    fun toggleResolvedSection() = list.click(RESOLVED_HEADER)
+
+    fun assertResolvedSectionShown() = list.awaitExists(RESOLVED_HEADER)
+
     fun clickEventState(index: Int) {
         scrollToEvent(index)
         stateButtonAtEvent(index).performClick()
@@ -230,6 +235,7 @@ class OverviewRobot(private val ui: ComposeUi) {
         val GROUP_TIME = hasTestTag(OverviewTestTags.GROUP_TIME)
         val GROUP_CONFIRM_ALL = hasTestTag(OverviewTestTags.GROUP_CONFIRM_ALL)
         val GROUP_MENU = hasTestTag(OverviewTestTags.GROUP_MENU)
+        val RESOLVED_HEADER = hasTestTag(OverviewTestTags.RESOLVED_HEADER)
         val SELECTION_BAR = hasTestTag(OverviewTestTags.SELECTION_BAR)
         const val LONG_TIMEOUT = 20_000L
 

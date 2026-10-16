@@ -88,6 +88,7 @@
     <string name="default_taken_time">Varsayılan alınma zamanı</string>
     <string name="taken_time_now">Kayıt zamanı</string>
     <string name="taken_time_scheduled">Planlanan zaman</string>
+    <string name="resolved_count">Tamamlanan (%1$d)</string>
     <string name="are_you_sure_delete_medicine">İlacı silmek istediğinizden emin misiniz?</string>
     <string name="no_reminders">Hiç hatırlatıcı ayarlanmadı</string>
     <string name="version">Versiyon %s</string>

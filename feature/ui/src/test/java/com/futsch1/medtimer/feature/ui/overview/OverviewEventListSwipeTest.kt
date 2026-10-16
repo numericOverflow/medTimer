@@ -41,6 +41,9 @@ class OverviewEventListSwipeTest {
                 ) {
                     OverviewEventList(
                         groups = persistentListOf(),
+                        resolvedSectionExpanded = false,
+                        resolvedSectionForcedOpen = false,
+                        onToggleResolvedSection = {},
                         selection = SelectionListController { it.id },
                         onEventClick = {},
                         onEnterSelectionMode = {},

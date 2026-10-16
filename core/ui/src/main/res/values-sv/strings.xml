@@ -103,6 +103,7 @@
     <string name="default_taken_time">Standardtid för intag</string>
     <string name="taken_time_now">Tidpunkt för registrering</string>
     <string name="taken_time_scheduled">Schemalagd tid</string>
+    <string name="resolved_count">Hanterade (%1$d)</string>
     <string name="are_you_sure_delete_medicine">Är du säker på att du vill ta bort den här läkemedlet?</string>
     <string name="no_reminders">Inga påminnelser satta</string>
     <string name="version">Version %s</string>

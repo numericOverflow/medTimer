@@ -98,6 +98,7 @@
     <string name="default_taken_time">Výchozí čas užití</string>
     <string name="taken_time_now">Čas zaznamenání</string>
     <string name="taken_time_scheduled">Naplánovaný čas</string>
+    <string name="resolved_count">Vyřízeno (%1$d)</string>
     <string name="are_you_sure_delete_medicine">Opravdu chcete smazat lék?</string>
     <string name="no_reminders">Nenastavena žádná připomenutí</string>
     <string name="version">Verze %s</string>

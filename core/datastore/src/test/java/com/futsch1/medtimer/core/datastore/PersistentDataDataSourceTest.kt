@@ -166,6 +166,15 @@ class PersistentDataDataSourceTest {
     }
 
     @Test
+    fun `resolved section starts collapsed and remembers its state`() {
+        assertEquals(false, dataSource.data.value.resolvedSectionExpanded)
+        dataSource.setResolvedSectionExpanded(true)
+        assertEquals(true, dataSource.data.value.resolvedSectionExpanded)
+        dataSource.setResolvedSectionExpanded(false)
+        assertEquals(false, dataSource.data.value.resolvedSectionExpanded)
+    }
+
+    @Test
     fun `setCheckedFilters with empty set`() {
         dataSource.setCheckedFilters(setOf(OverviewFilter.TAKEN))
         dataSource.setCheckedFilters(emptySet())

@@ -17,6 +17,7 @@ interface OverviewScreenState {
     val activeFilters: ImmutableSet<OverviewFilter>
     val combineNotifications: Boolean
     val groups: ImmutableList<OverviewGroup>
+    val resolvedSectionExpanded: Boolean
     val warnings: OverviewWarnings
 }
 
@@ -26,5 +27,6 @@ class MutableOverviewScreenState : OverviewScreenState {
     override var activeFilters by mutableStateOf<ImmutableSet<OverviewFilter>>(persistentSetOf())
     override var combineNotifications by mutableStateOf(false)
     override var groups by mutableStateOf<ImmutableList<OverviewGroup>>(persistentListOf())
+    override var resolvedSectionExpanded by mutableStateOf(false)
     override val warnings = MutableOverviewWarnings()
 }

@@ -93,6 +93,7 @@
     <string name="default_taken_time">Heure de prise par défaut</string>
     <string name="taken_time_now">Heure de l’enregistrement</string>
     <string name="taken_time_scheduled">Heure prévue</string>
+    <string name="resolved_count">Traités (%1$d)</string>
     <string name="are_you_sure_delete_medicine">Êtes-vous sûr de supprimer le médicament ?</string>
     <string name="no_reminders">Aucun rappel défini</string>
     <string name="version">Version %s</string>

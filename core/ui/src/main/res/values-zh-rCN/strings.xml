@@ -83,6 +83,7 @@
     <string name="default_taken_time">默认服用时间</string>
     <string name="taken_time_now">记录时间</string>
     <string name="taken_time_scheduled">计划时间</string>
+    <string name="resolved_count">已处理 (%1$d)</string>
     <string name="are_you_sure_delete_medicine">确定删除该药品吗？</string>
     <string name="no_reminders">未设置用药提醒</string>
     <string name="version">版本 %s</string>

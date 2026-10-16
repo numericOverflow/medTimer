@@ -88,6 +88,7 @@
     <string name="default_taken_time">Standard-Einnahmezeit</string>
     <string name="taken_time_now">Zeitpunkt der Erfassung</string>
     <string name="taken_time_scheduled">Geplante Zeit</string>
+    <string name="resolved_count">Erledigt (%1$d)</string>
     <string name="are_you_sure_delete_medicine">Medikament wirklich löschen?</string>
     <string name="no_reminders">Keine Erinnerungen</string>
     <string name="version">Version %s</string>

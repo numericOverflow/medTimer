@@ -88,6 +88,7 @@
     <string name="default_taken_time">Oletusottamisaika</string>
     <string name="taken_time_now">Kirjausaika</string>
     <string name="taken_time_scheduled">Ajastettu aika</string>
+    <string name="resolved_count">Käsitelty (%1$d)</string>
     <string name="are_you_sure_delete_medicine">Haluatko varmasti poistaa lääkkeen?</string>
     <string name="no_reminders">Ei muistutuksia</string>
     <string name="version">Versio %s</string>

@@ -111,6 +111,7 @@
     <string name="default_taken_time">Domyślny czas przyjęcia</string>
     <string name="taken_time_now">Czas zapisu</string>
     <string name="taken_time_scheduled">Zaplanowany czas</string>
+    <string name="resolved_count">Załatwione (%1$d)</string>
     <string name="are_you_sure_delete_reminder">Czy na pewno chcesz usunąć to przypomnienie?</string>
     <string name="app_version">Wersja aplikacji</string>
     <string name="are_you_sure_delete_events">Spowoduje to trwałe usunięcie całej historii leków. Tej operacji nie można cofnąć.</string>

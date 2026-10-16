@@ -26,7 +26,8 @@ data class PersistentData(
     val lastCustomDose: String,
     val lastCustomDoseAmount: String,
     val filterTags: Set<String>,
-    val checkedFilters: Set<OverviewFilter>
+    val checkedFilters: Set<OverviewFilter>,
+    val resolvedSectionExpanded: Boolean
 ) {
     companion object {
         fun default(): PersistentData {
@@ -43,7 +44,8 @@ data class PersistentData(
                 lastCustomDose = "",
                 lastCustomDoseAmount = "",
                 filterTags = emptySet(),
-                checkedFilters = emptySet()
+                checkedFilters = emptySet(),
+                resolvedSectionExpanded = false
             )
         }
     }

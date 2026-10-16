@@ -123,6 +123,7 @@
     <string name="default_taken_time">Типовий час прийому</string>
     <string name="taken_time_now">Час запису</string>
     <string name="taken_time_scheduled">Запланований час</string>
+    <string name="resolved_count">Виконано (%1$d)</string>
     <string name="three_days">3 дні</string>
     <string name="clear_events">Очистити всю історію</string>
     <string name="are_you_sure_delete_events">Це безповоротно видалить всю історію прийому ліків. Цю дію не можна скасувати.</string>

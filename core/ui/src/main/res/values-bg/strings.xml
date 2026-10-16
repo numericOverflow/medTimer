@@ -88,6 +88,7 @@
     <string name="default_taken_time">Час на приема по подразбиране</string>
     <string name="taken_time_now">Час на записване</string>
     <string name="taken_time_scheduled">Планиран час</string>
+    <string name="resolved_count">Обработени (%1$d)</string>
     <string name="are_you_sure_delete_medicine">Наистина ли искате да изтриете лекарството?</string>
     <string name="no_reminders">Няма добавени напомняния</string>
     <string name="version">Версия %s</string>

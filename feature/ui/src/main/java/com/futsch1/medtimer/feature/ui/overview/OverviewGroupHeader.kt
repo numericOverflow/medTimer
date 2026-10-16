@@ -38,7 +38,7 @@ import com.futsch1.medtimer.core.ui.R as CoreUiR
  * Lines the header text up with the text inside the cards: past the state button column, which the
  * rail runs through, and then the card's own content padding.
  */
-private val GROUP_HEADER_START_PADDING = EVENT_STATE_BUTTON_SIZE + EVENT_STATE_BUTTON_MARGIN * 2 + 12.dp
+internal val GROUP_HEADER_START_PADDING =EVENT_STATE_BUTTON_SIZE + EVENT_STATE_BUTTON_MARGIN * 2 + 12.dp
 
 /** Matches the touch target of the header actions, so a header with and without them is the same height. */
 private val GROUP_HEADER_MIN_HEIGHT = 48.dp

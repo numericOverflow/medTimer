@@ -88,6 +88,7 @@
     <string name="default_taken_time">Alapértelmezett bevételi idő</string>
     <string name="taken_time_now">A rögzítés ideje</string>
     <string name="taken_time_scheduled">Ütemezett idő</string>
+    <string name="resolved_count">Lezárt (%1$d)</string>
     <string name="are_you_sure_delete_medicine">Biztos törölni szeretnéd a gyógyszert?</string>
     <string name="no_reminders">Nincs emlékeztető beállítva</string>
     <string name="version">Verzió %s</string>

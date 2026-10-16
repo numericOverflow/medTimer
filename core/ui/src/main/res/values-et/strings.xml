@@ -53,6 +53,7 @@
     <string name="default_taken_time">Vaikimisi võtmise aeg</string>
     <string name="taken_time_now">Kirja panemise aeg</string>
     <string name="taken_time_scheduled">Planeeritud aeg</string>
+    <string name="resolved_count">Lahendatud (%1$d)</string>
     <string name="are_you_sure_delete_medicine">Kas oled kindel, et soovid selle ravimi kustutada?</string>
     <string name="no_reminders">Ühtegi meeldetuletust pole seadistatud</string>
     <string name="version">Versioon %s</string>

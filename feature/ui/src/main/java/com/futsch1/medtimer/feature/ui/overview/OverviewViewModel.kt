@@ -155,6 +155,8 @@ class OverviewViewModel @AssistedInject constructor(
         simulatedRemindersRepository.simulatedThrough.onEach { state.simulatedThrough = it }.launchIn(viewModelScope)
         preferencesDataSource.preferences.onEach { state.combineNotifications = it.combineNotifications }
             .launchIn(viewModelScope)
+        persistentDataDataSource.data.onEach { state.resolvedSectionExpanded = it.resolvedSectionExpanded }
+            .launchIn(viewModelScope)
         combine(preferencesDataSource.preferences, persistentDataDataSource.data) { _, _ -> }
             .onEach { refreshWarnings() }
             .launchIn(viewModelScope)
@@ -205,6 +207,11 @@ class OverviewViewModel @AssistedInject constructor(
     fun toggleFilter(f: OverviewFilter) {
         setFilters(if (f in state.activeFilters) state.activeFilters - f else state.activeFilters + f)
         persistentDataDataSource.setCheckedFilters(state.activeFilters)
+    }
+
+    /** The choice persists, so the section keeps its state across days, rotation and process death. */
+    fun toggleResolvedSection() {
+        persistentDataDataSource.setResolvedSectionExpanded(!state.resolvedSectionExpanded)
     }
 
     fun setFilters(filters: Set<OverviewFilter>) {

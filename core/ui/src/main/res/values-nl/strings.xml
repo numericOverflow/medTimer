@@ -88,6 +88,7 @@
     <string name="default_taken_time">Standaard innametijdstip</string>
     <string name="taken_time_now">Tijdstip van registratie</string>
     <string name="taken_time_scheduled">Gepland tijdstip</string>
+    <string name="resolved_count">Afgehandeld (%1$d)</string>
     <string name="are_you_sure_delete_medicine">Wil je de behandeling verwijderen?</string>
     <string name="no_reminders">Geen herinneringen</string>
     <string name="version">Versie %s</string>

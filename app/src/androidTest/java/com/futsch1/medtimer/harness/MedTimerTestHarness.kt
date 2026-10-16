@@ -17,6 +17,7 @@ import com.futsch1.medtimer.MainActivity
 import com.futsch1.medtimer.MyFailureHandler
 import com.futsch1.medtimer.feature.ui.overview.overviewEventListCacheWindowEnabled
 import com.futsch1.medtimer.feature.ui.overview.overviewEventListScrollToNowEnabled
+import com.futsch1.medtimer.feature.ui.overview.overviewResolvedSectionEnabled
 import com.futsch1.medtimer.utilities.grantAppPermission
 import org.junit.rules.RuleChain
 import org.junit.rules.TestName
@@ -85,6 +86,10 @@ class MedTimerTestHarness(testClassName: String) : TestRule {
 
         // The list otherwise jumps to the next upcoming event, scrolling already-acted-on events out of composition.
         overviewEventListScrollToNowEnabled = false
+
+        // A resolved dose otherwise moves to the bottom, so a test that acts on a row index would then check another dose.
+        // Tests of the resolved section switch it back on.
+        overviewResolvedSectionEnabled = false
 
         val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
         try {

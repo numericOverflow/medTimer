@@ -98,6 +98,10 @@ class PersistentDataDataSource @Inject constructor(
         medTimerSharedPreferences.edit { putStringSet(CHECKED_FILTERS, checkedFilters.map { it.toString() }.toSet()) }
     }
 
+    fun setResolvedSectionExpanded(expanded: Boolean) {
+        medTimerSharedPreferences.edit { putBoolean(RESOLVED_SECTION_EXPANDED, expanded) }
+    }
+
     fun setShowNotifications(showNotifications: Boolean) {
         defaultSharedPreferences.edit { putBoolean(SHOW_NOTIFICATION, showNotifications) }
     }
@@ -186,7 +190,8 @@ class PersistentDataDataSource @Inject constructor(
             filterTags = medTimerSharedPreferences.getStringSet(FILTER_TAGS, emptySet()) ?: emptySet(),
             checkedFilters = medTimerSharedPreferences.getStringSet(CHECKED_FILTERS, emptySet())
                 ?.mapNotNull { kotlin.runCatching { OverviewFilter.valueOf(it) }.getOrNull() }
-                ?.toSet() ?: emptySet()
+                ?.toSet() ?: emptySet(),
+            resolvedSectionExpanded = medTimerSharedPreferences.getBoolean(RESOLVED_SECTION_EXPANDED, default.resolvedSectionExpanded)
         )
     }
 
@@ -204,6 +209,7 @@ class PersistentDataDataSource @Inject constructor(
         const val LAST_CUSTOM_DOSE_AMOUNT = "lastCustomDoseAmount"
         const val FILTER_TAGS = "filterTags"
         const val CHECKED_FILTERS = "checkedFilters"
+        const val RESOLVED_SECTION_EXPANDED = "resolvedSectionExpanded"
         const val PENDING_SNOOZES = "pending_location_snoozes"
     }
 }

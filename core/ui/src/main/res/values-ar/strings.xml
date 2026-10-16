@@ -114,6 +114,7 @@
     <string name="default_taken_time">وقت التناول الافتراضي</string>
     <string name="taken_time_now">وقت التسجيل</string>
     <string name="taken_time_scheduled">الوقت المجدول</string>
+    <string name="resolved_count">تمت المعالجة (%1$d)</string>
     <string name="are_you_sure_delete_medicine">هل أنت متأكد من حذف الدواء؟</string>
     <string name="no_reminders">لم يتم تعيين تذكيرات</string>
     <string name="twenty_four_hours">24 ساعة</string>

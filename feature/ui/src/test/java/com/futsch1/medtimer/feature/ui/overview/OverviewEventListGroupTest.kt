@@ -5,6 +5,7 @@ import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.getBoundsInRoot
 import androidx.compose.ui.test.hasAnyAncestor
 import androidx.compose.ui.test.hasTestTag
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
@@ -16,6 +17,7 @@ import com.futsch1.medtimer.core.ui.theme.MedTimerTheme
 import com.futsch1.medtimer.core.ui.time.SystemDateTimeFormat
 import com.futsch1.medtimer.feature.ui.overview.actions.Button
 import com.futsch1.medtimer.feature.ui.overview.model.OverviewEvent
+import com.futsch1.medtimer.feature.ui.overview.model.OverviewState
 import com.futsch1.medtimer.feature.ui.overview.model.groupOverviewEvents
 import org.junit.Rule
 import org.junit.Test
@@ -38,11 +40,20 @@ class OverviewEventListGroupTest {
     private val nine = LocalDate.of(2026, 5, 28).atTime(9, 0).atZone(ZoneId.systemDefault()).toEpochSecond()
     private val ten = nine + 3_600
 
-    private fun setList(events: List<OverviewEvent>, onAction: (Button, List<OverviewEvent>) -> Unit = { _, _ -> }) {
+    private fun setList(
+        events: List<OverviewEvent>,
+        onAction: (Button, List<OverviewEvent>) -> Unit = { _, _ -> },
+        resolvedSectionExpanded: Boolean = false,
+        resolvedSectionForcedOpen: Boolean = false,
+        onToggleResolvedSection: () -> Unit = {},
+    ) {
         composeTestRule.setContent {
             MedTimerTheme {
                 OverviewEventList(
                     groups = groupOverviewEvents(events, combineNotifications = true),
+                    resolvedSectionExpanded = resolvedSectionExpanded,
+                    resolvedSectionForcedOpen = resolvedSectionForcedOpen,
+                    onToggleResolvedSection = onToggleResolvedSection,
                     selection = SelectionListController { it.id },
                     onEventClick = {},
                     onEnterSelectionMode = {},
@@ -119,6 +130,72 @@ class OverviewEventListGroupTest {
         composeTestRule.onAllNodesWithTag(OverviewTestTags.EVENT_CARD).assertCountEquals(1)
         assertHeaderTime(groupIndex = 0, timestamp = nine)
         assertTrue(bounds(OverviewTestTags.group(0)).top == 0.dp, "The first header needs no spacing above it")
+    }
+
+    @Test
+    fun `a collapsed resolved section shows its header after the open groups and hides its rows`() {
+        var toggles = 0
+        setList(
+            listOf(
+                TestOverviewEvent(id = 1, timestamp = nine, medicineName = "One", state = OverviewState.TAKEN),
+                TestOverviewEvent(id = 2, timestamp = ten, medicineName = "Two"),
+            ),
+            onToggleResolvedSection = { toggles++ },
+        )
+
+        composeTestRule.onAllNodesWithTag(OverviewTestTags.EVENT_CARD).assertCountEquals(1)
+        composeTestRule.onNodeWithTag(OverviewTestTags.RESOLVED_HEADER).assertExists()
+        assertTrue(bounds(OverviewTestTags.event(0)).bottom <= bounds(OverviewTestTags.RESOLVED_HEADER).top)
+
+        composeTestRule.onNodeWithTag(OverviewTestTags.RESOLVED_HEADER).performClick()
+        assertEquals(1, toggles)
+    }
+
+    @Test
+    fun `an expanded resolved section lists the resolved rows below the open ones`() {
+        setList(
+            listOf(
+                TestOverviewEvent(id = 1, timestamp = nine, medicineName = "One", state = OverviewState.TAKEN),
+                TestOverviewEvent(id = 2, timestamp = ten, medicineName = "Two"),
+            ),
+            resolvedSectionExpanded = true,
+        )
+
+        composeTestRule.onAllNodesWithTag(OverviewTestTags.EVENT_CARD).assertCountEquals(2)
+        // The open dose comes first although it is due later; the running index follows the screen.
+        composeTestRule.onNode(
+            hasText("Two", substring = true) and hasAnyAncestor(hasTestTag(OverviewTestTags.event(0))),
+            useUnmergedTree = true,
+        ).assertExists()
+        val header = bounds(OverviewTestTags.RESOLVED_HEADER)
+        assertTrue(bounds(OverviewTestTags.event(0)).bottom <= header.top)
+        assertTrue(header.bottom <= bounds(OverviewTestTags.event(1)).top)
+    }
+
+    @Test
+    fun `a day without open doses shows its resolved rows without a chevron to collapse them`() {
+        var toggles = 0
+        setList(
+            listOf(TestOverviewEvent(id = 1, timestamp = nine, medicineName = "One", state = OverviewState.SKIPPED)),
+            onToggleResolvedSection = { toggles++ },
+        )
+
+        composeTestRule.onAllNodesWithTag(OverviewTestTags.EVENT_CARD).assertCountEquals(1)
+        composeTestRule.onNodeWithTag(OverviewTestTags.RESOLVED_HEADER).performClick()
+        assertEquals(0, toggles)
+    }
+
+    @Test
+    fun `a filter to resolved doses opens the section`() {
+        setList(
+            listOf(
+                TestOverviewEvent(id = 1, timestamp = nine, medicineName = "One", state = OverviewState.TAKEN),
+                TestOverviewEvent(id = 2, timestamp = ten, medicineName = "Two"),
+            ),
+            resolvedSectionForcedOpen = true,
+        )
+
+        composeTestRule.onAllNodesWithTag(OverviewTestTags.EVENT_CARD).assertCountEquals(2)
     }
 
     private fun assertHeaderTime(groupIndex: Int, timestamp: Long) {

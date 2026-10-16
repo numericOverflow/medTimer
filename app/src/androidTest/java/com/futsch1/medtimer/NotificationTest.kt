@@ -2,6 +2,7 @@ package com.futsch1.medtimer
 
 import android.os.Build
 import com.adevinta.android.barista.rule.flaky.AllowFlaky
+import com.futsch1.medtimer.feature.ui.overview.overviewResolvedSectionEnabled
 import com.futsch1.medtimer.core.ui.R
 import com.futsch1.medtimer.utilities.assertSecondaryAlarmAfter
 import com.futsch1.medtimer.utilities.awaitNextSecond
@@ -330,6 +331,33 @@ class NotificationTest : MedTimerTestBase() {
 
         overview.assertEventState(0, R.string.taken)
         overview.assertEventState(1, R.string.taken)
+    }
+
+    @Test
+    @AllowFlaky(attempts = 3)
+    fun resolvedSection() {
+        overviewResolvedSectionEnabled = true
+        val notificationTime = aboutToFire()
+
+        seed.medicine(TEST_MED) {
+            reminder("1", notificationTime)
+            reminder(SECOND_ONE, notificationTime.plusMinutes(1))
+        }
+        scheduleRemindersNow()
+
+        navigation.toOverview()
+        overview.clickEventState(0)
+        overview.clickAction(R.string.taken)
+
+        // The taken dose leaves the list for the collapsed section
+        overview.assertResolvedSectionShown()
+        overview.assertEventCount(1)
+
+        // Opened, the section lists the taken dose after the open one
+        overview.toggleResolvedSection()
+        overview.assertEventCount(2)
+        overview.assertEventState(1, R.string.taken)
+        overview.assertEventTextContains(0, SECOND_ONE)
     }
 
     @Test

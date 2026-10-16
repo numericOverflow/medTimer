@@ -94,6 +94,7 @@
     <string name="default_taken_time">இயல்பு எடுத்த நேரம்</string>
     <string name="taken_time_now">பதிவு செய்த நேரம்</string>
     <string name="taken_time_scheduled">திட்டமிட்ட நேரம்</string>
+    <string name="resolved_count">முடிந்தவை (%1$d)</string>
     <string name="are_you_sure_delete_medicine">மருந்தை நீக்குவது உறுதி?</string>
     <string name="no_reminders">நினைவூட்டல்கள் இல்லை</string>
     <string name="version">பதிப்பு %s</string>

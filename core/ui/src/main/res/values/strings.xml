@@ -93,6 +93,7 @@
     <string name="default_taken_time">Default taken time</string>
     <string name="taken_time_now">Time of logging</string>
     <string name="taken_time_scheduled">Scheduled time</string>
+    <string name="resolved_count">Resolved (%1$d)</string>
     <string name="are_you_sure_delete_medicine">Are you sure to delete the medicine?</string>
     <string name="no_reminders">No reminders set</string>
     <string name="version">Version %s</string>
