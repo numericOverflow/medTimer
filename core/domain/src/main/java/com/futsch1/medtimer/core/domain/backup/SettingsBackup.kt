@@ -20,6 +20,7 @@ data class SettingsBackup(
     val showTakenTimeInOverview: Boolean,
     val showRemindedTimeInOverview: Boolean? = true,
     val showStockChangesInOverview: Boolean? = true,
+    val showOverviewFilters: Boolean? = true,
     // Null in backups written before the setting existed
     val defaultTakenTime: String? = null,
     val systemLocale: Boolean,

@@ -49,6 +49,7 @@ class BackupMapperTest {
             showTakenTimeInOverview = false,
             showRemindedTimeInOverview = true,
             showStockChangesInOverview = false,
+            showOverviewFilters = false,
             defaultTakenTime = DefaultTakenTime.SCHEDULED,
             systemLocale = true,
             theme = ThemeSetting.ALTERNATIVE,
@@ -86,6 +87,7 @@ class BackupMapperTest {
         assertEquals(false, backup.showTakenTimeInOverview)
         assertEquals(true, backup.showRemindedTimeInOverview)
         assertEquals(false, backup.showStockChangesInOverview)
+        assertEquals(false, backup.showOverviewFilters)
         assertEquals("SCHEDULED", backup.defaultTakenTime)
         assertEquals(true, backup.systemLocale)
         assertEquals("ALTERNATIVE", backup.theme)
@@ -128,6 +130,7 @@ class BackupMapperTest {
         assertEquals(true, backup.showTakenTimeInOverview)
         assertEquals(true, backup.showRemindedTimeInOverview)
         assertEquals(true, backup.showStockChangesInOverview)
+        assertEquals(true, backup.showOverviewFilters)
         assertEquals("NOW", backup.defaultTakenTime)
         assertEquals(false, backup.systemLocale)
         assertEquals("DEFAULT", backup.theme)
@@ -256,6 +259,7 @@ class BackupMapperTest {
             combineNotifications = true,
             useRelativeDateTime = true,
             showTakenTimeInOverview = false,
+            showOverviewFilters = false,
             systemLocale = true,
             theme = "ALTERNATIVE",
             hideMedicineName = true,
@@ -292,6 +296,7 @@ class BackupMapperTest {
         assertEquals(true, p.combineNotifications)
         assertEquals(true, p.useRelativeDateTime)
         assertEquals(false, p.showTakenTimeInOverview)
+        assertEquals(false, p.showOverviewFilters)
         assertEquals(true, p.systemLocale)
         assertEquals(ThemeSetting.ALTERNATIVE, p.theme)
         assertEquals(true, p.hideMedicineName)
@@ -322,6 +327,7 @@ class BackupMapperTest {
         )
 
         ds.saveHomeLocation(HomeLocation(1.0, 2.0, 100f))
+        ds.putBoolean(PreferencesDataSource.SHOW_OVERVIEW_FILTERS, false)
 
         val backup = SettingsBackup(
             weekendStartTimeMinutes = 0, weekendEndTimeMinutes = 540,
@@ -346,6 +352,25 @@ class BackupMapperTest {
         assertNull(ds.preferences.value.homeLocation)
         // A backup from before the setting existed restores the default
         assertEquals(DefaultTakenTime.NOW, ds.preferences.value.defaultTakenTime)
+        assertEquals(true, ds.preferences.value.showOverviewFilters)
+    }
+
+    @Test
+    fun `applyTo shows overview filters when a backup holds null for the setting`() {
+        val freshPrefs = ApplicationProvider.getApplicationContext<Context>()
+            .getSharedPreferences("test_apply_null_filters", Context.MODE_PRIVATE)
+        freshPrefs.edit().clear().commit()
+        val ds = PreferencesDataSource(
+            freshPrefs,
+            CoroutineScope(Dispatchers.Unconfined),
+            GsonBuilder().create()
+        )
+        ds.putBoolean(PreferencesDataSource.SHOW_OVERVIEW_FILTERS, false)
+
+        // Gson leaves fields that are missing in older backups null
+        UserPreferences.default().toSettingsBackup().copy(showOverviewFilters = null).applyTo(ds)
+
+        assertEquals(true, ds.preferences.value.showOverviewFilters)
     }
 
     @Test
@@ -377,6 +402,7 @@ class BackupMapperTest {
             combineNotifications = true,
             useRelativeDateTime = false,
             showTakenTimeInOverview = false,
+            showOverviewFilters = false,
             defaultTakenTime = DefaultTakenTime.SCHEDULED,
             systemLocale = true,
             theme = ThemeSetting.ALTERNATIVE,
@@ -414,6 +440,7 @@ class BackupMapperTest {
         assertEquals(original.combineNotifications, result.combineNotifications)
         assertEquals(original.useRelativeDateTime, result.useRelativeDateTime)
         assertEquals(original.showTakenTimeInOverview, result.showTakenTimeInOverview)
+        assertEquals(original.showOverviewFilters, result.showOverviewFilters)
         assertEquals(original.defaultTakenTime, result.defaultTakenTime)
         assertEquals(original.systemLocale, result.systemLocale)
         assertEquals(original.theme, result.theme)

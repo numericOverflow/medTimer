@@ -197,6 +197,13 @@ class PreferencesDataSourceTest {
     }
 
     @Test
+    fun `showOverviewFilters defaults to shown and reads the stored value`() {
+        assertEquals(true, dataSource.preferences.value.showOverviewFilters)
+        sharedPreferences.edit().putBoolean(PreferencesDataSource.SHOW_OVERVIEW_FILTERS, false).commit()
+        assertEquals(false, dataSource.preferences.value.showOverviewFilters)
+    }
+
+    @Test
     fun `theme parses all variants`() {
         data class Case(val setup: () -> Unit, val expected: ThemeSetting)
         listOf(

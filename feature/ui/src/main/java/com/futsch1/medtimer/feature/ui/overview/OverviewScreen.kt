@@ -207,11 +207,13 @@ fun OverviewScreen(
                         modifier = Modifier.weight(1f),
                     )
 
-                    OverviewFilterRow(
-                        activeFilters = state.activeFilters,
-                        onToggleFilter = onToggleFilter,
-                        modifier = Modifier.padding(vertical = 4.dp),
-                    )
+                    if (state.showFilters) {
+                        OverviewFilterRow(
+                            activeFilters = state.activeFilters,
+                            onToggleFilter = onToggleFilter,
+                            modifier = Modifier.padding(vertical = 4.dp),
+                        )
+                    }
                 }
             } else {
                 Column {
@@ -222,13 +224,15 @@ fun OverviewScreen(
                         modifier = Modifier.fillMaxWidth(),
                     )
 
-                    OverviewFilterRow(
-                        activeFilters = state.activeFilters,
-                        onToggleFilter = onToggleFilter,
-                        modifier = Modifier
-                            .align(Alignment.CenterHorizontally)
-                            .padding(vertical = 4.dp),
-                    )
+                    if (state.showFilters) {
+                        OverviewFilterRow(
+                            activeFilters = state.activeFilters,
+                            onToggleFilter = onToggleFilter,
+                            modifier = Modifier
+                                .align(Alignment.CenterHorizontally)
+                                .padding(vertical = 4.dp),
+                        )
+                    }
                 }
             }
         }

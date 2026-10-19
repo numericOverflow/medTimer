@@ -42,6 +42,7 @@ class JSONSettingsBackupUnitTest {
         showTakenTimeInOverview = false,
         showRemindedTimeInOverview = true,
         showStockChangesInOverview = true,
+        showOverviewFilters = false,
         defaultTakenTime = DefaultTakenTime.SCHEDULED,
         systemLocale = true,
         theme = ThemeSetting.ALTERNATIVE,
@@ -90,6 +91,7 @@ class JSONSettingsBackupUnitTest {
         verify(mockPrefs2).putBoolean(PreferencesDataSource.SHOW_TAKEN_TIME_IN_OVERVIEW, false)
         verify(mockPrefs2).putBoolean(PreferencesDataSource.SHOW_REMINDED_TIME_IN_OVERVIEW, true)
         verify(mockPrefs2).putBoolean(PreferencesDataSource.SHOW_STOCK_CHANGES_IN_OVERVIEW, true)
+        verify(mockPrefs2).putBoolean(PreferencesDataSource.SHOW_OVERVIEW_FILTERS, false)
         verify(mockPrefs2).putString(
             PreferencesDataSource.DEFAULT_TAKEN_TIME,
             DefaultTakenTime.SCHEDULED.ordinal.toString()
@@ -111,6 +113,21 @@ class JSONSettingsBackupUnitTest {
         verify(mockPrefs2).setWeekendStartTime(LocalTime.of(7, 30))
         verify(mockPrefs2).setWeekendEndTime(LocalTime.of(10, 0))
         verify(mockPrefs2).putStringSet(PreferencesDataSource.WEEKEND_DAYS, setOf("1", "7"))
+    }
+
+    @Test
+    fun testBackupWithoutOverviewFiltersShowsThem() {
+        val mockPrefs = mock<PreferencesDataSource>()
+        whenever(mockPrefs.preferences).thenReturn(MutableStateFlow(buildPreferences()))
+        val json = Gson().toJson(JSONSettingsBackup(mockPrefs).createBackup())
+        // A backup written before the setting existed has no such field
+        val oldJson = json.replace("\"showOverviewFilters\":false,", "")
+        assertFalse(oldJson.contains("showOverviewFilters"))
+
+        val mockPrefs2 = mock<PreferencesDataSource>()
+        assertTrue(JSONSettingsBackup(mockPrefs2).applyBackup(oldJson))
+
+        verify(mockPrefs2).putBoolean(PreferencesDataSource.SHOW_OVERVIEW_FILTERS, true)
     }
 
     @Test

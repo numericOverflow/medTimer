@@ -327,6 +327,8 @@
     <string name="show_taken_time_in_overview">Show taken time in overview</string>
     <string name="show_reminded_time_in_overview">Show reminded time in overview</string>
     <string name="show_stock_changes_in_overview">Show stock changes in overview</string>
+    <string name="show_overview_filters">Show status filters</string>
+    <string name="show_overview_filters_summary">Show status filter icon bar in overview</string>
     <string name="expiration_settings">Expiration settings</string>
     <string name="remind_days_before_expiration">Remind days before expiration</string>
     <string name="weekly">Weekly</string>

@@ -131,6 +131,27 @@ class BasicUITest : MedTimerTestBase() {
 
     @Test
     @AllowFlaky(attempts = 3)
+    fun overviewFiltersHiddenBySetting() {
+        seed.medicine("Test") { intervalReminder("2", 24.hours) }
+
+        navigation.toOverview()
+        overview.toggleFilter(OverviewFilter.TAKEN)
+        overview.assertEventCount(0)
+
+        settings.click(R.string.display_settings, R.string.show_overview_filters)
+        navigation.toOverview()
+        overview.assertFiltersHidden()
+        overview.assertEventContains(TEST_2)
+
+        // Showing the filters again starts with no active filter
+        settings.click(R.string.display_settings, R.string.show_overview_filters)
+        navigation.toOverview()
+        overview.assertFiltersShown()
+        overview.assertEventContains(TEST_2)
+    }
+
+    @Test
+    @AllowFlaky(attempts = 3)
     fun overviewFilters() {
         val medicineId = seed.medicine("Test") { intervalReminder("2", 24.hours) }
 

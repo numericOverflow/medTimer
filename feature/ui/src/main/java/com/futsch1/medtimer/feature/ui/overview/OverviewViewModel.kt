@@ -38,6 +38,7 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
@@ -53,6 +54,13 @@ import java.time.LocalDate
 import java.time.ZoneId
 import java.time.temporal.ChronoUnit
 import kotlin.time.Duration.Companion.seconds
+
+/**
+ * Hidden filters have no control to clear them, so a hidden filter row shows every event and
+ * showing the row again starts with no active filter.
+ */
+internal fun filtersForVisibility(showFilters: Boolean, checkedFilters: Set<OverviewFilter>): Set<OverviewFilter> =
+    if (showFilters) checkedFilters else emptySet()
 
 @HiltViewModel(assistedFactory = OverviewViewModel.Factory::class)
 class OverviewViewModel @AssistedInject constructor(
@@ -161,7 +169,12 @@ class OverviewViewModel @AssistedInject constructor(
             .onEach { refreshWarnings() }
             .launchIn(viewModelScope)
 
-        setFilters(persistentDataDataSource.data.value.checkedFilters)
+        // Applied once right away, because the setting may have been switched off while this view model was not alive.
+        applyFilterVisibility(preferencesDataSource.preferences.value.showOverviewFilters)
+        preferencesDataSource.preferences.map { it.showOverviewFilters }
+            .distinctUntilChanged()
+            .onEach(::applyFilterVisibility)
+            .launchIn(viewModelScope)
 
         viewModelScope.launch {
             simulatedRemindersRepository.simulatedReminders.collect { reminders ->
@@ -217,6 +230,16 @@ class OverviewViewModel @AssistedInject constructor(
     fun setFilters(filters: Set<OverviewFilter>) {
         state.activeFilters = filters.toPersistentSet()
         filterState.update { it.copy(activeFilters = filters) }
+    }
+
+    private fun applyFilterVisibility(showFilters: Boolean) {
+        state.showFilters = showFilters
+        val checkedFilters = persistentDataDataSource.data.value.checkedFilters
+        val filters = filtersForVisibility(showFilters, checkedFilters)
+        if (filters != checkedFilters) {
+            persistentDataDataSource.setCheckedFilters(filters)
+        }
+        setFilters(filters)
     }
 
     /** Long-pressing one event selects every event of its group, so the selection matches the card on screen. */

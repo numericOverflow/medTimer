@@ -101,6 +101,8 @@ The `Default taken time` display setting decides the time of a plain `Taken`. `T
 
 Taken and skipped doses move out of the way. When every dose of a reminder time is resolved, the group moves into the `Resolved` section at the bottom of the day. A group with some open doses stays in place, and its resolved doses show dimmed. The `Resolved` section is collapsed by default. Tap its header to open or close it, and the app remembers your choice. The section opens on its own for a day without open doses, and when the filter shows only taken or skipped doses.
 
+If you do not use the status filters below the calendar, turn off the `Show status filters` display setting to hide them. The overview then shows all doses, and the filters are clear when you turn the setting on again.
+
 ## Additional dose with preset amount
 
 On the `Overview` screen, the `Log additional dose` screen asks to select the medicine and the

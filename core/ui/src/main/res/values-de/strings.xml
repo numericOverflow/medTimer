@@ -303,6 +303,8 @@
     <string name="show_taken_time_in_overview">Zeit der Einnahme in der Übersicht anzeigen</string>
     <string name="show_reminded_time_in_overview">Erinnerungszeit in der Übersicht anzeigen</string>
     <string name="show_stock_changes_in_overview">Bestandsänderungen in der Übersicht anzeigen</string>
+    <string name="show_overview_filters">Statusfilter anzeigen</string>
+    <string name="show_overview_filters_summary">Symbolleiste der Statusfilter in der Übersicht anzeigen</string>
     <string name="expiration_settings">Ablauf-Einstellungen</string>
     <string name="remind_days_before_expiration">Tage vor Ablauf erinnern</string>
     <string name="medicine_stock_settings">Medikamentenvorratseinstellungen</string>

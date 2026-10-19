@@ -15,6 +15,7 @@ interface OverviewScreenState {
     val day: LocalDate
     val simulatedThrough: LocalDate
     val activeFilters: ImmutableSet<OverviewFilter>
+    val showFilters: Boolean
     val combineNotifications: Boolean
     val groups: ImmutableList<OverviewGroup>
     val resolvedSectionExpanded: Boolean
@@ -25,6 +26,7 @@ class MutableOverviewScreenState : OverviewScreenState {
     override var day: LocalDate by mutableStateOf(LocalDate.now())
     override var simulatedThrough: LocalDate by mutableStateOf(LocalDate.now())
     override var activeFilters by mutableStateOf<ImmutableSet<OverviewFilter>>(persistentSetOf())
+    override var showFilters by mutableStateOf(true)
     override var combineNotifications by mutableStateOf(false)
     override var groups by mutableStateOf<ImmutableList<OverviewGroup>>(persistentListOf())
     override var resolvedSectionExpanded by mutableStateOf(false)

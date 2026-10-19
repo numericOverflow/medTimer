@@ -315,6 +315,8 @@
     <string name="show_taken_time_in_overview">Pokaż godzinę przyjęcia w przeglądzie</string>
     <string name="show_reminded_time_in_overview">Pokaż czas przypomnienia w przeglądzie</string>
     <string name="show_stock_changes_in_overview">Pokaż zmiany stanu zapasów w przeglądzie</string>
+    <string name="show_overview_filters">Pokaż filtry statusu</string>
+    <string name="show_overview_filters_summary">Pokaż pasek ikon filtrów statusu w przeglądzie</string>
     <string name="expiration_settings">Ustawienia wygaśnięcia</string>
     <string name="remind_days_before_expiration">Przypomnij dni przed wygaśnięciem</string>
     <string name="medicine_stock_settings">Ustawienia zapasów leków</string>

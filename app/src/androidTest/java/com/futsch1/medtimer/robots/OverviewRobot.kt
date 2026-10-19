@@ -159,6 +159,10 @@ class OverviewRobot(private val ui: ComposeUi) {
 
     fun toggleFilter(filter: OverviewFilter) = screen.click(hasTestTag(OverviewTestTags.filter(filter)))
 
+    fun assertFiltersShown() = screen.await { OverviewFilter.entries.all { screen.exists(hasTestTag(OverviewTestTags.filter(it))) } }
+
+    fun assertFiltersHidden() = screen.await { OverviewFilter.entries.none { screen.exists(hasTestTag(OverviewTestTags.filter(it))) } }
+
     fun assertDaySelected(date: LocalDate) {
         screen.node(hasTestTag(OverviewTestTags.day(date))).assertIsSelected()
     }

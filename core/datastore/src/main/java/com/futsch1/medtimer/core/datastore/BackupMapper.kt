@@ -30,6 +30,7 @@ fun UserPreferences.toSettingsBackup(): SettingsBackup = SettingsBackup(
     showTakenTimeInOverview = showTakenTimeInOverview,
     showRemindedTimeInOverview = showRemindedTimeInOverview,
     showStockChangesInOverview = showStockChangesInOverview,
+    showOverviewFilters = showOverviewFilters,
     defaultTakenTime = defaultTakenTime.name,
     systemLocale = systemLocale,
     theme = theme.name,
@@ -80,6 +81,10 @@ fun SettingsBackup.applyTo(preferencesDataSource: PreferencesDataSource) {
     preferencesDataSource.putBoolean(
         PreferencesDataSource.SHOW_STOCK_CHANGES_IN_OVERVIEW,
         showStockChangesInOverview ?: true
+    )
+    preferencesDataSource.putBoolean(
+        PreferencesDataSource.SHOW_OVERVIEW_FILTERS,
+        showOverviewFilters ?: true
     )
     preferencesDataSource.putString(
         PreferencesDataSource.DEFAULT_TAKEN_TIME,

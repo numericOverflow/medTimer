@@ -42,6 +42,12 @@
         app:singleLineTitle="false"
         app:key="show_stock_changes_in_overview" />
     <SwitchPreferenceCompat
+        android:defaultValue="true"
+        android:title="@string/show_overview_filters"
+        android:summary="@string/show_overview_filters_summary"
+        app:singleLineTitle="false"
+        app:key="show_overview_filters" />
+    <SwitchPreferenceCompat
         android:defaultValue="false"
         android:title="@string/system_locale"
         app:singleLineTitle="false"
