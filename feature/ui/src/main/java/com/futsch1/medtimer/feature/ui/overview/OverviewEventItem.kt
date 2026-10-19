@@ -263,5 +263,5 @@ private fun groupRowShape(position: OverviewGroupPosition): Shape {
 @Composable
 private fun eventContainerColor(isSelected: Boolean) =
     if (isSelected) MaterialTheme.colorScheme.secondaryContainer
-    else MaterialTheme.colorScheme.surfaceContainer
+    else MaterialTheme.colorScheme.surfaceContainerHighest
 
