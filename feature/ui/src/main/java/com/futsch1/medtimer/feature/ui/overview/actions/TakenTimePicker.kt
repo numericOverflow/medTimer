@@ -14,10 +14,11 @@ import javax.inject.Inject
 
 /**
  * Asks for the time a dose was really taken. Only a time picker opens, on the date of the initial
- * instant, which its title shows. Its Change date button opens a date picker for another day, with
- * the picked time kept. A time in the future is rejected, and the time picker opens again on the
- * current time with a hint, because a future taken time would shift the next due time of interval
- * and linked reminders.
+ * instant, which its title shows. Its Change date button opens a date picker on the date in effect.
+ * Date OK makes the picked day the date in effect, date Cancel keeps it; both return to the time
+ * picker with the picked time kept. Only time picker OK marks. A time in the future is rejected, and
+ * the time picker opens again on the current time with a hint, because a future taken time would
+ * shift the next due time of interval and linked reminders.
  */
 class TakenTimePicker @Inject constructor(
     private val datePickerDialogFactory: DatePickerDialogFactory,
@@ -48,10 +49,16 @@ class TakenTimePicker @Inject constructor(
         }.show(fragmentActivity.supportFragmentManager, TimePickerDialogFactory.DIALOG_TAG)
     }
 
-    private fun pickDate(initialDate: LocalDate, minutes: Int, onPicked: (Instant) -> Unit) {
+    /** OK and Cancel both return to the time picker with the clock at [minutes]; only OK changes the date in effect. */
+    private fun pickDate(dateInEffect: LocalDate, minutes: Int, onPicked: (Instant) -> Unit) {
         val today = timeAccess.now().atZone(timeAccess.systemZone()).toLocalDate()
-        datePickerDialogFactory.create(initialDate, maxDate = today) { daysSinceEpoch ->
-            confirm(LocalDate.ofEpochDay(daysSinceEpoch), minutes, onPicked)
+        val time = minutesToTime(minutes)
+        datePickerDialogFactory.create(
+            dateInEffect,
+            maxDate = today,
+            onCancel = { pickTime(dateInEffect, time, isRetry = false, onPicked) }
+        ) { daysSinceEpoch ->
+            pickTime(LocalDate.ofEpochDay(daysSinceEpoch), time, isRetry = false, onPicked)
         }.show(fragmentActivity.supportFragmentManager, DatePickerDialogFactory.DIALOG_TAG)
     }
 
@@ -71,4 +78,6 @@ class TakenTimePicker @Inject constructor(
 
 /** The instant of [minutes] past midnight on [date], or null when that instant lies after [now]. */
 internal fun takenTimeOrNull(date: LocalDate, minutes: Int, zone: ZoneId, now: Instant): Instant? =
-    date.atTime(LocalTime.of(minutes / 60, minutes % 60)).atZone(zone).toInstant().takeIf { it <= now }
+    date.atTime(minutesToTime(minutes)).atZone(zone).toInstant().takeIf { it <= now }
+
+private fun minutesToTime(minutes: Int): LocalTime = LocalTime.of(minutes / 60, minutes % 60)

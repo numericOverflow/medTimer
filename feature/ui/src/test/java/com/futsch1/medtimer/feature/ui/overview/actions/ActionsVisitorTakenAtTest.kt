@@ -50,7 +50,8 @@ import kotlin.test.assertTrue
 
 /**
  * Coverage for Taken at: a time picker opens on the date the default taken time setting gives, its
- * Change date button picks another day, and one picked time applies to every visited event.
+ * Change date button picks another day and returns to the time picker, and one picked time applies
+ * to every visited event.
  */
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [28])
@@ -65,7 +66,7 @@ class ActionsVisitorTakenAtTest {
         val onPositive: (Int) -> Unit,
     )
 
-    private class DateDialog(val initialDate: LocalDate?, val maxDate: LocalDate?, val onPositive: (Long) -> Unit)
+    private class DateDialog(val initialDate: LocalDate?, val maxDate: LocalDate?, val onCancel: (() -> Unit)?, val onPositive: (Long) -> Unit)
 
     private val testDispatcher = UnconfinedTestDispatcher()
 
@@ -194,7 +195,7 @@ class ActionsVisitorTakenAtTest {
     }
 
     @Test
-    fun changeDateCombinesThePickedDateWithThePickedTime() {
+    fun changeDateOkReturnsToTheTimePickerOnThePickedDate() {
         setDefaultTakenTime(DefaultTakenTime.SCHEDULED)
         takenAt(pastEvent(1, at(yesterday, 21, 0)))
 
@@ -203,24 +204,41 @@ class ActionsVisitorTakenAtTest {
         val dateDialog = dateDialogs.single()
         assertEquals(yesterday, dateDialog.initialDate)
         assertEquals(today, dateDialog.maxDate)
+        assertNotNull(dateDialog.onCancel)
         verifyBlocking(commandBus, never()) { markReminderEvents(any(), any(), anyOrNull()) }
 
         val pickedDate = today.minusDays(3)
         dateDialog.onPositive(pickedDate.toEpochDay())
         idle()
 
+        verifyBlocking(commandBus, never()) { markReminderEvents(any(), any(), anyOrNull()) }
+        assertEquals(2, timeDialogs.size)
+        val reopened = timeDialogs.last()
+        assertEquals(LocalTime.of(22, 0), reopened.initialTime)
+        assertEquals(activity.getString(R.string.taken_on_date, pickedDate.toString()), reopened.title)
+        assertEquals(R.string.change_date, reopened.negativeButtonText)
+        confirmTime(22 * 60, reopened)
+
         verifyBlocking(commandBus) { markReminderEvents(listOf(1), ReminderEvent.ReminderStatus.TAKEN, at(pickedDate, 22, 0)) }
     }
 
     @Test
-    fun cancellingTheDatePickerMarksNothing() {
+    fun cancellingTheDatePickerReturnsToTheTimePickerOnTheOldDate() {
         takenAt(pastEvent(1, at(today, 8, 0)))
 
         timeDialogs.single().onNegative!!(8 * 60)
         idle()
+        dateDialogs.single().onCancel!!()
+        idle()
 
-        assertEquals(1, dateDialogs.size)
         verifyBlocking(commandBus, never()) { markReminderEvents(any(), any(), anyOrNull()) }
+        assertEquals(2, timeDialogs.size)
+        val reopened = timeDialogs.last()
+        assertEquals(LocalTime.of(8, 0), reopened.initialTime)
+        assertEquals(activity.getString(R.string.taken_on_date, today.toString()), reopened.title)
+        confirmTime(8 * 60, reopened)
+
+        verifyBlocking(commandBus) { markReminderEvents(listOf(1), ReminderEvent.ReminderStatus.TAKEN, at(today, 8, 0)) }
     }
 
     @Test
@@ -243,6 +261,13 @@ class ActionsVisitorTakenAtTest {
         dateDialogs.single().onPositive(yesterday.toEpochDay())
         idle()
 
+        verifyBlocking(commandBus, never()) { markReminderEvents(any(), any(), anyOrNull()) }
+        assertEquals(3, timeDialogs.size)
+        val reopened = timeDialogs.last()
+        assertEquals(LocalTime.of(7, 0), reopened.initialTime)
+        assertEquals(activity.getString(R.string.taken_on_date, yesterday.toString()), reopened.title)
+        confirmTime(7 * 60, reopened)
+
         verifyBlocking(commandBus) { markReminderEvents(listOf(1), ReminderEvent.ReminderStatus.TAKEN, at(yesterday, 7, 0)) }
     }
 
@@ -256,11 +281,78 @@ class ActionsVisitorTakenAtTest {
         dateDialogs.single().onPositive(today.toEpochDay())
         idle()
 
+        val reopened = timeDialogs.last()
+        assertEquals(LocalTime.of(10, 0), reopened.initialTime)
+        assertEquals(activity.getString(R.string.taken_on_date, today.toString()), reopened.title)
+        confirmTime(10 * 60, reopened)
+
         verifyBlocking(commandBus, never()) { markReminderEvents(any(), any(), anyOrNull()) }
-        assertEquals(activity.getString(R.string.taken_time_in_future), timeDialogs.last().title)
+        val retry = timeDialogs.last()
+        assertEquals(3, timeDialogs.size)
+        assertEquals(activity.getString(R.string.taken_time_in_future), retry.title)
+        assertEquals(R.string.change_date, retry.negativeButtonText)
+
+        // The retry keeps the changed date for its own Change date button.
+        retry.onNegative!!(8 * 60)
+        idle()
+        assertEquals(today, dateDialogs.last().initialDate)
+        dateDialogs.last().onCancel!!()
+        idle()
         confirmTime(8 * 60, timeDialogs.last())
 
         verifyBlocking(commandBus) { markReminderEvents(listOf(1), ReminderEvent.ReminderStatus.TAKEN, at(today, 8, 0)) }
+    }
+
+    @Test
+    fun backOnTheReopenedTimePickerMarksNothing() {
+        takenAt(pastEvent(1, at(today, 8, 0)))
+
+        timeDialogs.single().onNegative!!(8 * 60)
+        idle()
+        dateDialogs.single().onPositive(yesterday.toEpochDay())
+        idle()
+
+        assertEquals(2, timeDialogs.size)
+        verifyBlocking(commandBus, never()) { markReminderEvents(any(), any(), anyOrNull()) }
+    }
+
+    @Test
+    fun cancelAfterAnEarlierDateOkKeepsThatDate() {
+        takenAt(pastEvent(1, at(today, 8, 0)))
+        val threeDaysAgo = today.minusDays(3)
+
+        timeDialogs.single().onNegative!!(8 * 60)
+        idle()
+        dateDialogs.single().onPositive(threeDaysAgo.toEpochDay())
+        idle()
+        timeDialogs.last().onNegative!!(11 * 60)
+        idle()
+
+        assertEquals(2, dateDialogs.size)
+        assertEquals(threeDaysAgo, dateDialogs.last().initialDate)
+        dateDialogs.last().onCancel!!()
+        idle()
+
+        val reopened = timeDialogs.last()
+        assertEquals(3, timeDialogs.size)
+        assertEquals(LocalTime.of(11, 0), reopened.initialTime)
+        assertEquals(activity.getString(R.string.taken_on_date, threeDaysAgo.toString()), reopened.title)
+        confirmTime(11 * 60, reopened)
+
+        verifyBlocking(commandBus) { markReminderEvents(listOf(1), ReminderEvent.ReminderStatus.TAKEN, at(threeDaysAgo, 11, 0)) }
+    }
+
+    @Test
+    fun changeDateKeepsTheClockEditedBeforeIt() {
+        takenAt(pastEvent(1, at(today, 8, 0)))
+        assertEquals(LocalTime.of(9, 0), timeDialogs.single().initialTime)
+
+        timeDialogs.single().onNegative!!(6 * 60 + 30)
+        idle()
+        dateDialogs.single().onCancel!!()
+        idle()
+
+        assertEquals(LocalTime.of(6, 30), timeDialogs.last().initialTime)
     }
 
     @Test
@@ -296,9 +388,9 @@ class ActionsVisitorTakenAtTest {
                 timeDialogs.add(TimeDialog(it.getArgument(0), it.getArgument(3), it.getArgument(4), it.getArgument(5), it.getArgument(6)))
                 mock<MaterialTimePicker>()
             }
-        whenever(datePickerDialogFactory.create(anyOrNull(), anyOrNull(), any()))
+        whenever(datePickerDialogFactory.create(anyOrNull(), anyOrNull(), anyOrNull(), any()))
             .thenAnswer {
-                dateDialogs.add(DateDialog(it.getArgument(0), it.getArgument(1), it.getArgument(2)))
+                dateDialogs.add(DateDialog(it.getArgument(0), it.getArgument(1), it.getArgument(2), it.getArgument(3)))
                 mock<MaterialDatePicker<Long>>()
             }
     }

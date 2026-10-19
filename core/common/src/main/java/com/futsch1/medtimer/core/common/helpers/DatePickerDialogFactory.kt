@@ -15,10 +15,14 @@ class DatePickerDialogFactory @Inject constructor() {
         const val DIALOG_TAG = "date_picker"
     }
 
-    /** With [maxDate] set, later days are disabled and the calendar ends on the month of [maxDate]. */
+    /**
+     * With [maxDate] set, later days are disabled and the calendar ends on the month of [maxDate].
+     * [onCancel] runs on the Cancel button and on back or outside tap, never after OK.
+     */
     fun create(
         startDate: LocalDate?,
         maxDate: LocalDate? = null,
+        onCancel: (() -> Unit)? = null,
         onPositiveButtonClick: (daysSinceEpoch: Long) -> Unit
     ): MaterialDatePicker<Long> {
         val effectiveStartDate = startDate ?: LocalDate.now()
@@ -31,6 +35,11 @@ class DatePickerDialogFactory @Inject constructor() {
         datePickerDialog.addOnPositiveButtonClickListener(MaterialPickerOnPositiveButtonClickListener { selectedDate ->
             onPositiveButtonClick(selectedDate / DateUtils.DAY_IN_MILLIS)
         })
+        if (onCancel != null) {
+            // Not addOnDismissListener: dismiss also fires after OK.
+            datePickerDialog.addOnNegativeButtonClickListener { onCancel() }
+            datePickerDialog.addOnCancelListener { onCancel() }
+        }
         return datePickerDialog
     }
 
