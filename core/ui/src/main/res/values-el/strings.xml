@@ -85,6 +85,8 @@
     <string name="confirm_all">Επιβεβαίωση όλων</string>
     <string name="taken_at">Ελήφθη στις…</string>
     <string name="taken_time_in_future">Η ώρα λήψης δεν μπορεί να είναι στο μέλλον</string>
+    <string name="taken_on_date">Ελήφθη στις %1$s</string>
+    <string name="change_date">Αλλαγή ημερομηνίας</string>
     <string name="default_taken_time">Προεπιλεγμένη ώρα λήψης</string>
     <string name="taken_time_now">Ώρα καταγραφής</string>
     <string name="taken_time_scheduled">Προγραμματισμένη ώρα</string>

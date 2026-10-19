@@ -85,6 +85,8 @@
     <string name="confirm_all">Vahvista kaikki</string>
     <string name="taken_at">Otettu klo…</string>
     <string name="taken_time_in_future">Ottamisaika ei voi olla tulevaisuudessa</string>
+    <string name="taken_on_date">Otettu %1$s</string>
+    <string name="change_date">Vaihda päivämäärä</string>
     <string name="default_taken_time">Oletusottamisaika</string>
     <string name="taken_time_now">Kirjausaika</string>
     <string name="taken_time_scheduled">Ajastettu aika</string>

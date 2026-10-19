@@ -100,6 +100,8 @@
     <string name="confirm_all">Godkänn alla</string>
     <string name="taken_at">Tagen kl.…</string>
     <string name="taken_time_in_future">Tiden för intag kan inte ligga i framtiden</string>
+    <string name="taken_on_date">Tagen %1$s</string>
+    <string name="change_date">Ändra datum</string>
     <string name="default_taken_time">Standardtid för intag</string>
     <string name="taken_time_now">Tidpunkt för registrering</string>
     <string name="taken_time_scheduled">Schemalagd tid</string>

@@ -30,6 +30,8 @@
     <string name="confirm_all">Bekreft alle</string>
     <string name="taken_at">Tatt kl.…</string>
     <string name="taken_time_in_future">Tidspunktet for inntak kan ikke være i fremtiden</string>
+    <string name="taken_on_date">Tatt %1$s</string>
+    <string name="change_date">Endre dato</string>
     <string name="default_taken_time">Standard tidspunkt for inntak</string>
     <string name="taken_time_now">Tidspunkt for registrering</string>
     <string name="taken_time_scheduled">Planlagt tidspunkt</string>

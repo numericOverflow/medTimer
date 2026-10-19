@@ -80,6 +80,8 @@
     <string name="confirm_all">全部确认</string>
     <string name="taken_at">服用时间…</string>
     <string name="taken_time_in_future">服用时间不能晚于当前时间</string>
+    <string name="taken_on_date">服用日期：%1$s</string>
+    <string name="change_date">更改日期</string>
     <string name="default_taken_time">默认服用时间</string>
     <string name="taken_time_now">记录时间</string>
     <string name="taken_time_scheduled">计划时间</string>

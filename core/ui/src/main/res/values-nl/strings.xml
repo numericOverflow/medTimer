@@ -85,6 +85,8 @@
     <string name="confirm_all">Alles bevestigen</string>
     <string name="taken_at">Ingenomen om…</string>
     <string name="taken_time_in_future">Het innametijdstip kan niet in de toekomst liggen</string>
+    <string name="taken_on_date">Ingenomen op %1$s</string>
+    <string name="change_date">Datum wijzigen</string>
     <string name="default_taken_time">Standaard innametijdstip</string>
     <string name="taken_time_now">Tijdstip van registratie</string>
     <string name="taken_time_scheduled">Gepland tijdstip</string>

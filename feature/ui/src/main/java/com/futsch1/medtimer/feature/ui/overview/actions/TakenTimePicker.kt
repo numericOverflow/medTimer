@@ -5,6 +5,7 @@ import com.futsch1.medtimer.core.common.helpers.DatePickerDialogFactory
 import com.futsch1.medtimer.core.common.helpers.TimePickerDialogFactory
 import com.futsch1.medtimer.core.common.time.TimeAccess
 import com.futsch1.medtimer.core.ui.R
+import com.futsch1.medtimer.core.ui.TimeFormatter
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalTime
@@ -12,38 +13,59 @@ import java.time.ZoneId
 import javax.inject.Inject
 
 /**
- * Asks for the time a dose was really taken: a date picker, then a time picker. A time in the
- * future is rejected, and the time picker opens again on the current time with a hint, because a
- * future taken time would shift the next due time of interval and linked reminders.
+ * Asks for the time a dose was really taken. Only a time picker opens, on the date of the initial
+ * instant, which its title shows. Its Change date button opens a date picker for another day, with
+ * the picked time kept. A time in the future is rejected, and the time picker opens again on the
+ * current time with a hint, because a future taken time would shift the next due time of interval
+ * and linked reminders.
  */
 class TakenTimePicker @Inject constructor(
     private val datePickerDialogFactory: DatePickerDialogFactory,
     private val timePickerDialogFactory: TimePickerDialogFactory,
     private val fragmentActivity: FragmentActivity,
     private val timeAccess: TimeAccess,
+    private val timeFormatter: TimeFormatter,
 ) {
-    /** Opens the pickers on [initial] and hands the confirmed time to [onPicked]. Cancel calls nothing. */
+    /** Opens the time picker on [initial] and hands the confirmed time to [onPicked]. Cancel calls nothing. */
     fun pick(initial: Instant, onPicked: (Instant) -> Unit) {
-        val zone = timeAccess.systemZone()
-        val initialDateTime = initial.atZone(zone).toLocalDateTime()
-        datePickerDialogFactory.create(initialDateTime.toLocalDate()) { daysSinceEpoch ->
-            pickTime(LocalDate.ofEpochDay(daysSinceEpoch), initialDateTime.toLocalTime(), titleText = null, onPicked)
+        val initialDateTime = initial.atZone(timeAccess.systemZone()).toLocalDateTime()
+        pickTime(initialDateTime.toLocalDate(), initialDateTime.toLocalTime(), isRetry = false, onPicked)
+    }
+
+    private fun pickTime(date: LocalDate, initialTime: LocalTime, isRetry: Boolean, onPicked: (Instant) -> Unit) {
+        val title = if (isRetry) {
+            fragmentActivity.getString(R.string.taken_time_in_future)
+        } else {
+            fragmentActivity.getString(R.string.taken_on_date, timeFormatter.localDateToString(date))
+        }
+        timePickerDialogFactory.create(
+            initialTime,
+            title = title,
+            negativeButtonText = R.string.change_date,
+            onNegativeButtonClick = { minutes -> pickDate(date, minutes, onPicked) }
+        ) { minutes ->
+            confirm(date, minutes, onPicked)
+        }.show(fragmentActivity.supportFragmentManager, TimePickerDialogFactory.DIALOG_TAG)
+    }
+
+    private fun pickDate(initialDate: LocalDate, minutes: Int, onPicked: (Instant) -> Unit) {
+        val today = timeAccess.now().atZone(timeAccess.systemZone()).toLocalDate()
+        datePickerDialogFactory.create(initialDate, maxDate = today) { daysSinceEpoch ->
+            confirm(LocalDate.ofEpochDay(daysSinceEpoch), minutes, onPicked)
         }.show(fragmentActivity.supportFragmentManager, DatePickerDialogFactory.DIALOG_TAG)
     }
 
-    private fun pickTime(date: LocalDate, initialTime: LocalTime, titleText: Int?, onPicked: (Instant) -> Unit) {
-        timePickerDialogFactory.create(initialTime, titleText) { minutes ->
-            val zone = timeAccess.systemZone()
-            val now = timeAccess.now()
-            val picked = takenTimeOrNull(date, minutes, zone, now)
-            if (picked != null) {
-                onPicked(picked)
-            } else {
-                // A future date cannot hold a valid time, so the retry moves to today.
-                val nowDateTime = now.atZone(zone).toLocalDateTime()
-                pickTime(minOf(date, nowDateTime.toLocalDate()), nowDateTime.toLocalTime(), R.string.taken_time_in_future, onPicked)
-            }
-        }.show(fragmentActivity.supportFragmentManager, TimePickerDialogFactory.DIALOG_TAG)
+    private fun confirm(date: LocalDate, minutes: Int, onPicked: (Instant) -> Unit) {
+        val zone = timeAccess.systemZone()
+        val now = timeAccess.now()
+        val picked = takenTimeOrNull(date, minutes, zone, now)
+        if (picked != null) {
+            onPicked(picked)
+        } else {
+            // A future date cannot hold a valid time, so the retry moves to today.
+            val nowDateTime = now.atZone(zone).toLocalDateTime()
+            pickTime(minOf(date, nowDateTime.toLocalDate()), nowDateTime.toLocalTime(), isRetry = true, onPicked)
+        }
     }
 }
 

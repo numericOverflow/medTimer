@@ -91,6 +91,8 @@
     <string name="confirm_all">அனைத்தையும் உறுதிப்படுத்தவும்</string>
     <string name="taken_at">எடுத்த நேரம்…</string>
     <string name="taken_time_in_future">எடுத்த நேரம் எதிர்காலத்தில் இருக்க முடியாது</string>
+    <string name="taken_on_date">%1$s அன்று எடுக்கப்பட்டது</string>
+    <string name="change_date">தேதியை மாற்று</string>
     <string name="default_taken_time">இயல்பு எடுத்த நேரம்</string>
     <string name="taken_time_now">பதிவு செய்த நேரம்</string>
     <string name="taken_time_scheduled">திட்டமிட்ட நேரம்</string>

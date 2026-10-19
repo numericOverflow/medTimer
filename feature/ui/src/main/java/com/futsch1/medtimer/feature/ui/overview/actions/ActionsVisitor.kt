@@ -142,7 +142,7 @@ class ActionsVisitor @Inject constructor(
         }
         val scheduledReminders = visitScheduledReminder.toList()
         val pastReminderEvents = visitedPastReminderEvents.toList()
-        // The pickers open on the time a plain Taken would record, so the default setting applies here too.
+        // The picker opens on the date and time a plain Taken would record, so the default setting applies here too.
         val remindedTimestamp = pastReminderEvents.firstOrNull()?.reminderEvent?.remindedTimestamp
             ?: scheduledReminders.first().timestamp
         val initialTime = resolveTakenTime(preferencesDataSource.preferences.value.defaultTakenTime, remindedTimestamp, timeAccess.now())

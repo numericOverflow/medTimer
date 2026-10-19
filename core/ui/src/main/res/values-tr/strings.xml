@@ -85,6 +85,8 @@
     <string name="confirm_all">Tümünü onayla</string>
     <string name="taken_at">Alınma saati…</string>
     <string name="taken_time_in_future">Alınma zamanı gelecekte olamaz</string>
+    <string name="taken_on_date">Alınma tarihi: %1$s</string>
+    <string name="change_date">Tarihi değiştir</string>
     <string name="default_taken_time">Varsayılan alınma zamanı</string>
     <string name="taken_time_now">Kayıt zamanı</string>
     <string name="taken_time_scheduled">Planlanan zaman</string>

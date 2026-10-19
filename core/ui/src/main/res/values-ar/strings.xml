@@ -111,6 +111,8 @@
     <string name="confirm_all">تأكيد الكل</string>
     <string name="taken_at">تم التناول في…</string>
     <string name="taken_time_in_future">لا يمكن أن يكون وقت التناول في المستقبل</string>
+    <string name="taken_on_date">تم التناول في %1$s</string>
+    <string name="change_date">تغيير التاريخ</string>
     <string name="default_taken_time">وقت التناول الافتراضي</string>
     <string name="taken_time_now">وقت التسجيل</string>
     <string name="taken_time_scheduled">الوقت المجدول</string>

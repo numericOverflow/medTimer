@@ -85,6 +85,8 @@
     <string name="confirm_all">Alle bestätigen</string>
     <string name="taken_at">Eingenommen um…</string>
     <string name="taken_time_in_future">Die Einnahmezeit darf nicht in der Zukunft liegen</string>
+    <string name="taken_on_date">Eingenommen am %1$s</string>
+    <string name="change_date">Datum ändern</string>
     <string name="default_taken_time">Standard-Einnahmezeit</string>
     <string name="taken_time_now">Zeitpunkt der Erfassung</string>
     <string name="taken_time_scheduled">Geplante Zeit</string>

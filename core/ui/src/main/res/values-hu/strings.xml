@@ -85,6 +85,8 @@
     <string name="confirm_all">Összes megerősítése</string>
     <string name="taken_at">Bevéve ekkor…</string>
     <string name="taken_time_in_future">A bevétel ideje nem lehet a jövőben</string>
+    <string name="taken_on_date">Bevéve: %1$s</string>
+    <string name="change_date">Dátum módosítása</string>
     <string name="default_taken_time">Alapértelmezett bevételi idő</string>
     <string name="taken_time_now">A rögzítés ideje</string>
     <string name="taken_time_scheduled">Ütemezett idő</string>

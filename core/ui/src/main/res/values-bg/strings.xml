@@ -85,6 +85,8 @@
     <string name="confirm_all">Потвърди всички</string>
     <string name="taken_at">Взето в…</string>
     <string name="taken_time_in_future">Часът на приема не може да е в бъдещето</string>
+    <string name="taken_on_date">Взето на %1$s</string>
+    <string name="change_date">Промяна на датата</string>
     <string name="default_taken_time">Час на приема по подразбиране</string>
     <string name="taken_time_now">Час на записване</string>
     <string name="taken_time_scheduled">Планиран час</string>

@@ -120,6 +120,8 @@
     <string name="confirm_all">Підтвердити всі</string>
     <string name="taken_at">Прийнято о…</string>
     <string name="taken_time_in_future">Час прийому не може бути в майбутньому</string>
+    <string name="taken_on_date">Прийнято %1$s</string>
+    <string name="change_date">Змінити дату</string>
     <string name="default_taken_time">Типовий час прийому</string>
     <string name="taken_time_now">Час запису</string>
     <string name="taken_time_scheduled">Запланований час</string>

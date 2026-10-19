@@ -90,6 +90,8 @@
     <string name="confirm_all">Conferma tutto</string>
     <string name="taken_at">Preso alle…</string>
     <string name="taken_time_in_future">L’ora di assunzione non può essere nel futuro</string>
+    <string name="taken_on_date">Preso il %1$s</string>
+    <string name="change_date">Cambia data</string>
     <string name="default_taken_time">Ora di assunzione predefinita</string>
     <string name="taken_time_now">Ora della registrazione</string>
     <string name="taken_time_scheduled">Ora programmata</string>

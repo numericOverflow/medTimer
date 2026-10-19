@@ -62,6 +62,8 @@
     <string name="confirm_all">Staðfesta allt</string>
     <string name="taken_at">Tekið kl.…</string>
     <string name="taken_time_in_future">Inntökutíminn má ekki vera í framtíðinni</string>
+    <string name="taken_on_date">Tekið %1$s</string>
+    <string name="change_date">Breyta dagsetningu</string>
     <string name="default_taken_time">Sjálfgefinn inntökutími</string>
     <string name="taken_time_now">Skráningartími</string>
     <string name="taken_time_scheduled">Áætlaður tími</string>
