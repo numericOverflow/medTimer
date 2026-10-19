@@ -90,6 +90,12 @@ var overviewResolvedSectionEnabled = true
 
 private const val RESOLVED_SECTION_HEADER_KEY = "resolved_section_header"
 
+/** Space above the resolved section header, twice [EVENT_SPACING], so the section break reads as more than another group. */
+private val RESOLVED_SECTION_SPACING = EVENT_SPACING * 2
+
+/** A state button centre in root coordinates, and whether its row sits in the resolved section, whose rail is drawn apart. */
+internal data class RailAnchor(val y: Float, val inResolvedSection: Boolean)
+
 /**
  * The events of one day, one card per [OverviewGroup] under the group's time header, with the
  * fully resolved groups in a collapsible section at the bottom.
@@ -131,7 +137,7 @@ fun OverviewEventList(
     val showResolvedSection = sections.resolved.isNotEmpty()
 
     val railColor = MaterialTheme.colorScheme.primary
-    val railAnchors = remember { mutableStateMapOf<Int, Float>() }
+    val railAnchors = remember { mutableStateMapOf<Int, RailAnchor>() }
     var listTop by remember { mutableFloatStateOf(0f) }
     val overscrollEffect = rememberOverscrollEffect()
     val listState = if (overviewEventListCacheWindowEnabled) {
@@ -180,6 +186,7 @@ fun OverviewEventList(
                     onDispose { railAnchors.remove(event.id) }
                 }
                 val position = OverviewGroupPosition.of(indexInGroup, group.events.size)
+                val inResolvedSection = groupIndex >= firstResolvedGroupIndex
                 val startsResolvedSection = groupIndex == firstResolvedGroupIndex && indexInGroup == 0
                 Column(Modifier.animateItem()) {
                     if (startsResolvedSection) {
@@ -188,7 +195,7 @@ fun OverviewEventList(
                             expanded = true,
                             collapsible = resolvedSectionCollapsible,
                             onToggle = onToggleResolvedSection,
-                            modifier = Modifier.padding(top = if (groupIndex > 0) EVENT_SPACING else 0.dp),
+                            modifier = Modifier.padding(top = if (groupIndex > 0) RESOLVED_SECTION_SPACING else 0.dp),
                         )
                     }
                     if (position.isGroupStart) {
@@ -218,7 +225,7 @@ fun OverviewEventList(
                         onAction = { button -> onAction(button, listOf(event)) },
                         modifier = Modifier.testTag(OverviewTestTags.event(groupStartIndices[groupIndex] + indexInGroup)),
                         position = position,
-                        onRailAnchor = { railAnchors[event.id] = it },
+                        onRailAnchor = { railAnchors[event.id] = RailAnchor(it, inResolvedSection) },
                     )
                 }
             }
@@ -231,7 +238,7 @@ fun OverviewEventList(
                     collapsible = true,
                     onToggle = onToggleResolvedSection,
                     modifier = Modifier
-                        .padding(top = if (shownGroups.isNotEmpty()) EVENT_SPACING else 0.dp)
+                        .padding(top = if (shownGroups.isNotEmpty()) RESOLVED_SECTION_SPACING else 0.dp)
                         .animateItem(),
                 )
             }
@@ -272,26 +279,38 @@ internal fun Modifier.overviewDaySwipe(threshold: Float, onDaySwipe: (Int) -> Un
  * [anchors] are button centres in root coordinates, reported by the items themselves; sorting
  * them recovers the visual order without assuming anything about composition order.
  */
-private fun DrawScope.drawRailPills(anchors: Collection<Float>, listTop: Float, color: Color) {
-    if (anchors.size < 2) return
-    val centers = anchors.map { it - listTop }.sorted()
+private fun DrawScope.drawRailPills(anchors: Collection<RailAnchor>, listTop: Float, color: Color) {
     val width = RAIL_PILL_WIDTH.toPx()
-    val buttonRadius = EVENT_STATE_BUTTON_SIZE.toPx() / 2
-    for (i in 0 until centers.lastIndex) {
-        val corridorTop = centers[i] + buttonRadius
-        val corridorBottom = centers[i + 1] - buttonRadius
-        val inset = RAIL_INSET.toPx().coerceAtMost((corridorBottom - corridorTop - width) / 2).coerceAtLeast(0f)
-        val top = corridorTop + inset
-        val bottom = corridorBottom - inset
-        if (bottom <= top) continue
+    val spans = railPillSpans(anchors, buttonRadius = EVENT_STATE_BUTTON_SIZE.toPx() / 2, pillWidth = width, maxInset = RAIL_INSET.toPx())
+    for (span in spans) {
         drawRoundRect(
             color = color,
-            topLeft = Offset(RAIL_CENTER_X.toPx() - width / 2, top),
-            size = Size(width, bottom - top),
+            topLeft = Offset(RAIL_CENTER_X.toPx() - width / 2, span.start - listTop),
+            size = Size(width, span.endInclusive - span.start),
             cornerRadius = CornerRadius(width / 2),
         )
     }
 }
+
+/**
+ * The vertical extent of every rail pill, in the coordinates of [anchors]. The open and the
+ * resolved section each get a rail of their own, so no pill crosses the section break; with no
+ * resolved section, or nothing but one, that is a single rail.
+ */
+internal fun railPillSpans(
+    anchors: Collection<RailAnchor>,
+    buttonRadius: Float,
+    pillWidth: Float,
+    maxInset: Float,
+): List<ClosedFloatingPointRange<Float>> =
+    anchors.groupBy { it.inResolvedSection }.values.flatMap { section ->
+        section.map { it.y }.sorted().zipWithNext { above, below ->
+            val corridorTop = above + buttonRadius
+            val corridorBottom = below - buttonRadius
+            val inset = maxInset.coerceAtMost((corridorBottom - corridorTop - pillWidth) / 2).coerceAtLeast(0f)
+            (corridorTop + inset)..(corridorBottom - inset)
+        }.filter { it.endInclusive > it.start }
+    }
 
 private val EVENT_LIST_PREVIEW_TIME: Instant =
     LocalDate.of(2026, 5, 28).atTime(8, 0).atZone(ZoneId.systemDefault()).toInstant()

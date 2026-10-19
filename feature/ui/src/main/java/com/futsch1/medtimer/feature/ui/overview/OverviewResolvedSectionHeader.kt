@@ -46,10 +46,7 @@ fun OverviewResolvedSectionHeader(
     modifier: Modifier = Modifier,
 ) {
     Column(modifier.fillMaxWidth().testTag(OverviewTestTags.RESOLVED_HEADER)) {
-        HorizontalDivider(
-            color = MaterialTheme.colorScheme.outlineVariant,
-            modifier = Modifier.padding(start = GROUP_HEADER_START_PADDING),
-        )
+        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
@@ -71,7 +68,7 @@ fun OverviewResolvedSectionHeader(
             Text(
                 text = stringResource(CoreUiR.string.resolved_count, eventCount),
                 style = MaterialTheme.typography.titleSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                color = MaterialTheme.colorScheme.onSurface,
             )
             Spacer(Modifier.weight(1f))
             if (collapsible) {
