@@ -23,6 +23,12 @@
         app:key="notification_settings_out_of_stock"
         app:singleLineTitle="false" />
     <SwitchPreferenceCompat
+        android:defaultValue="false"
+        android:title="@string/combine_notifications"
+        android:summary="@string/combine_notifications_summary"
+        app:singleLineTitle="false"
+        app:key="combine_notifications" />
+    <SwitchPreferenceCompat
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:defaultValue="false"

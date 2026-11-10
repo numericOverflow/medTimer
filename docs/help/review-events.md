@@ -16,7 +16,7 @@ If the reminder's event was deleted in the meantime, tapping the notification re
 
 ## Doses at the same time
 
-On **Overview**, the doses that share one reminder time show together in one card under that time. A single dose has no time header. Taken doses keep their place in the card. Long-press a dose to select every dose of its card. To show every dose in its own card, turn off **Group entries by reminder time in overview** in **Display settings**. This setting does not change notifications. To get one notification for the doses of one time, turn on **Combine same time notifications**.
+On **Overview**, the doses that share one reminder time show together in one card under that time. A single dose has no time header. Taken doses keep their place in the card. Long-press a dose to select every dose of its card. To show every dose in its own card, turn off **Group entries by reminder time in overview** in **Display settings**. This setting does not change notifications. To get one notification for the doses of one time, turn on **Combine same time notifications** in **Notification and reminder settings**.
 
 The time header offers **Confirm all**, which marks every open dose of that time as taken with one tap. Doses that are already taken or skipped keep their state and time. The three-dot button next to it opens the actions for the whole group, for example **Skipped** or **Reschedule reminder**. An action that does not apply to every dose of the group does not show.
 
