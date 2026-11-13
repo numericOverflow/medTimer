@@ -15,7 +15,6 @@ import com.futsch1.medtimer.core.domain.repository.ReminderEventRepository
 import com.futsch1.medtimer.core.domain.repository.ReminderRepository
 import com.futsch1.medtimer.core.ui.R
 import com.futsch1.medtimer.feature.reminders.api.command.ReminderCommandBus
-import com.futsch1.medtimer.feature.reminders.api.getVariableAmountActivityIntent
 import com.futsch1.medtimer.feature.reminders.api.notificationData.ReminderNotificationData
 import com.futsch1.medtimer.feature.ui.helpers.DeleteHelper
 import com.futsch1.medtimer.feature.ui.overview.VariableAmountHandler
@@ -71,6 +70,8 @@ class ActionsVisitor @Inject constructor(
             rescheduleReminders()
         } else if (button == Button.TAKEN_AT) {
             pickTakenTime()
+        } else if (button == Button.TAKEN) {
+            take(visitedEvents.toList(), null)
         } else {
             for (visitedEvent in visitedEvents) {
                 when (visitedEvent) {
@@ -84,16 +85,14 @@ class ActionsVisitor @Inject constructor(
     private suspend fun processScheduledReminder(scheduledReminder: ScheduledReminder, button: Button) {
         when (button) {
             Button.ACKNOWLEDGED -> processStockAcknowledged(scheduledReminder)
-            Button.TAKEN -> processFutureReminder(scheduledReminder, true)
-            Button.SKIPPED -> processFutureReminder(scheduledReminder, false)
+            Button.SKIPPED -> processFutureSkipped(scheduledReminder)
             else -> Unit
         }
     }
 
     private fun processPastReminderEvent(pastReminderEvent: PastReminderEvent, button: Button) {
         when (button) {
-            Button.TAKEN -> processTakenOrSkipped(pastReminderEvent.reminderEvent, true)
-            Button.SKIPPED -> processTakenOrSkipped(pastReminderEvent.reminderEvent, false)
+            Button.SKIPPED -> processSkipped(pastReminderEvent.reminderEvent)
             Button.RERAISE -> processDeleteReRaiseReminderEvent(pastReminderEvent.reminderEvent)
             Button.DELETE -> processDeleteReminderEvent(pastReminderEvent.reminderEvent)
             Button.ACKNOWLEDGED -> applicationScope.launch {
@@ -103,8 +102,8 @@ class ActionsVisitor @Inject constructor(
                 )
             }
 
-            // Both open a picker first and are handled in complete.
-            Button.RESCHEDULE, Button.TAKEN_AT -> Unit
+            // Handled in complete: Taken may ask for the dosage, the others open a picker first.
+            Button.TAKEN, Button.RESCHEDULE, Button.TAKEN_AT -> Unit
         }
     }
 
@@ -167,9 +166,10 @@ class ActionsVisitor @Inject constructor(
     /**
      * Marks the doses that don't ask for the dosage at once, so a cancelled amount dialog does not lose [takenTime]
      * for them. Then each dose that asks gets its amount dialog in screen order. An upcoming one gets its row only
-     * on OK: a left-over RAISED row would keep the scheduler from ever notifying it.
+     * on OK: a left-over RAISED row would keep the scheduler from ever notifying it. Plain Taken passes no
+     * [takenTime], so the current time is recorded.
      */
-    private suspend fun take(events: List<VisitedEvent>, takenTime: Instant) {
+    private suspend fun take(events: List<VisitedEvent>, takenTime: Instant?) {
         val (askingEvents, plainEvents) = events.partition { it.asksForAmount() }
         val reminderEventIds = plainEvents.filterIsInstance<VisitedEvent.Scheduled>().map {
             createReminderEvent(it.scheduledReminder).reminderEventId
@@ -217,9 +217,8 @@ class ActionsVisitor @Inject constructor(
         applicationScope.launch { commandBus.showReminderNotification(reminderNotificationData) }
     }
 
-    private fun processTakenOrSkipped(reminderEvent: ReminderEvent, taken: Boolean) {
-        val status = if (taken) ReminderEvent.ReminderStatus.TAKEN else ReminderEvent.ReminderStatus.SKIPPED
-        applicationScope.launch { commandBus.markReminderEvents(listOf(reminderEvent.reminderEventId), status) }
+    private fun processSkipped(reminderEvent: ReminderEvent) {
+        applicationScope.launch { commandBus.markReminderEvents(listOf(reminderEvent.reminderEventId), ReminderEvent.ReminderStatus.SKIPPED) }
     }
 
     private fun processDeleteReRaiseReminderEvent(reminderEvent: ReminderEvent) {
@@ -254,25 +253,9 @@ class ActionsVisitor @Inject constructor(
         }, {})
     }
 
-    private suspend fun processFutureReminder(
-        scheduledReminder: ScheduledReminder,
-        taken: Boolean
-    ) {
-        val reminderEvent = reminderEventCreator.getOrCreateReminderEvent(
-            scheduledReminder,
-            scheduledReminder.timestamp.epochSecond
-        )
-        if (taken && scheduledReminder.reminder.variableAmount) {
-            fragmentActivity.startActivity(
-                getVariableAmountActivityIntent(
-                    fragmentActivity,
-                    ReminderNotificationData.fromReminderEvent(reminderEvent)
-                )
-            )
-        } else {
-            val status = if (taken) ReminderEvent.ReminderStatus.TAKEN else ReminderEvent.ReminderStatus.SKIPPED
-            applicationScope.launch { commandBus.markReminderEvents(listOf(reminderEvent.reminderEventId), status) }
-        }
+    private suspend fun processFutureSkipped(scheduledReminder: ScheduledReminder) {
+        val reminderEvent = createReminderEvent(scheduledReminder)
+        applicationScope.launch { commandBus.markReminderEvents(listOf(reminderEvent.reminderEventId), ReminderEvent.ReminderStatus.SKIPPED) }
     }
 
     private suspend fun processStockAcknowledged(scheduledReminder: ScheduledReminder) {
